@@ -57,6 +57,67 @@ body.mobile-preview #deviceFrame{max-width:410px;margin:0 auto;box-shadow:0 12px
   body:not(.mobile-preview) .wrap{padding:10px}
 }
 
+
+/* Boss Battle FX */
+.boss-arena{position:relative;min-height:560px;border-radius:24px;overflow:hidden;
+background:radial-gradient(circle at 50% 35%,#fef3c7 0,#ddd6fe 34%,#1e1b4b 100%);
+border:2px solid #8b5cf6;box-shadow:0 20px 50px #312e8155}
+.boss-stage{position:absolute;inset:0;background:
+radial-gradient(circle at 20% 20%,#fff8 0 2%,transparent 3%),
+radial-gradient(circle at 80% 30%,#fff5 0 1%,transparent 2%),
+linear-gradient(180deg,#0000,#0005);animation:bossBg 6s ease-in-out infinite alternate}
+@keyframes bossBg{from{filter:brightness(.95)}to{filter:brightness(1.12)}}
+.boss-fighter{position:absolute;bottom:80px;text-align:center;transition:transform .25s}
+.boss-player{left:8%;width:36%}.boss-enemy{right:8%;width:36%}
+.boss-avatar{font-size:100px;line-height:1;filter:drop-shadow(0 10px 12px #0004);animation:floaty 2s ease-in-out infinite}
+.boss-enemy .boss-avatar{font-size:118px;animation:monsterFloat 1.8s ease-in-out infinite}
+@keyframes floaty{50%{transform:translateY(-8px)}}@keyframes monsterFloat{50%{transform:translateY(-14px) scale(1.03)}}
+.boss-name{font-size:20px;font-weight:1000;color:#fff;text-shadow:0 2px 4px #000}
+.boss-hp{height:18px;background:#111827aa;border:2px solid #fff5;border-radius:999px;overflow:hidden;margin:8px auto;max-width:260px}
+.boss-hp i{display:block;height:100%;background:linear-gradient(90deg,#22c55e,#84cc16);transition:width .35s}
+.boss-enemy .boss-hp i{background:linear-gradient(90deg,#fb7185,#ef4444)}
+.boss-vs{position:absolute;left:50%;top:34%;transform:translate(-50%,-50%);font-size:58px;font-weight:1000;color:#fff;text-shadow:0 4px 12px #000}
+.pet-badge{display:inline-block;padding:5px 10px;background:#fef3c7;color:#78350f;border-radius:999px;font-weight:900;margin-top:5px}
+.boss-actions{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);width:min(92%,720px);display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.boss-actions button{background:#ffffffee;border:2px solid #ffffffaa;box-shadow:0 8px 18px #0002}
+.boss-log{position:absolute;left:50%;top:12px;transform:translateX(-50%);width:min(88%,700px);background:#0f172dcc;color:#fff;padding:10px 14px;border-radius:14px;text-align:center;font-weight:800;backdrop-filter:blur(5px)}
+.fx{position:absolute;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center;opacity:0}
+.fx.show{animation:fxBurst .55s ease-out}
+.fx .burst{font-size:110px;filter:drop-shadow(0 0 15px #fff)}
+@keyframes fxBurst{0%{opacity:0;transform:scale(.3)}20%{opacity:1}100%{opacity:0;transform:scale(1.5)}}
+.boss-hit{animation:bossHit .4s ease-in-out}
+@keyframes bossHit{25%{transform:translateX(-18px)}50%{transform:translateX(18px)}75%{transform:translateX(-10px)}100%{transform:translateX(0)}}
+.boss-win{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:#0008;z-index:20;color:#fff;text-align:center}
+.boss-win.show{display:flex}.boss-win h2{font-size:46px;margin:0}.boss-win p{font-size:20px}
+@media(max-width:800px){
+  .boss-arena{min-height:620px}.boss-player{left:3%;width:43%}.boss-enemy{right:3%;width:43%}
+  .boss-avatar{font-size:72px}.boss-enemy .boss-avatar{font-size:82px}.boss-vs{top:32%;font-size:42px}
+  .boss-actions{grid-template-columns:repeat(2,1fr);bottom:12px}
+}
+
+
+/* PK Pet Battle */
+.pk-arena{position:relative;min-height:610px;border-radius:24px;overflow:hidden;
+background:radial-gradient(circle at 50% 20%,#dbeafe 0,#ddd6fe 36%,#111827 100%);
+border:2px solid #6366f1;box-shadow:0 18px 45px #11182733}
+.pk-top{padding:14px 18px;background:#111827cc;color:#fff;text-align:center}
+.pk-battle{display:grid;grid-template-columns:1fr 120px 1fr;gap:14px;align-items:center;padding:26px 20px 115px}
+.pk-side{background:#ffffffdd;border-radius:20px;padding:18px;text-align:center;box-shadow:0 12px 24px #0002}
+.pk-avatar{font-size:92px;line-height:1;animation:pkFloat 2s ease-in-out infinite;filter:drop-shadow(0 8px 10px #0003)}
+.pk-right .pk-avatar{animation-delay:.5s}
+@keyframes pkFloat{50%{transform:translateY(-10px)}}
+.pk-name{font-size:19px;font-weight:1000}.pk-owner{color:#475569;font-size:13px}
+.pk-lv{display:inline-block;margin-top:5px;padding:4px 8px;background:#eef2ff;border-radius:999px;font-weight:900}
+.pk-hp{height:16px;background:#e5e7eb;border-radius:99px;overflow:hidden;margin:9px 0}.pk-hp i{display:block;height:100%;background:linear-gradient(90deg,#22c55e,#16a34a);transition:width .35s}.pk-right .pk-hp i{background:linear-gradient(90deg,#fb7185,#ef4444)}
+.pk-vs{font-size:42px;font-weight:1000;color:#fff;text-shadow:0 3px 10px #000;text-align:center}
+.pk-actions{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);width:min(94%,760px);display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.pk-actions button{min-height:54px;background:#ffffffef;border:2px solid #ffffffaa}
+.pk-log{margin:0 18px;padding:10px 14px;min-height:70px;border-radius:14px;background:#0f172ddd;color:#fff;line-height:1.55}
+.pk-fx{position:absolute;inset:0;pointer-events:none;display:flex;justify-content:center;align-items:center;opacity:0;z-index:15}.pk-fx.show{animation:pkBurst .65s ease-out}.pk-fx b{font-size:110px;filter:drop-shadow(0 0 18px #fff)}@keyframes pkBurst{0%{opacity:0;transform:scale(.2)}20%{opacity:1}100%{opacity:0;transform:scale(1.45)}}
+.pk-win{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:#0009;color:#fff;z-index:30;text-align:center}.pk-win.show{display:flex}.pk-win h2{font-size:48px;margin:0 0 8px}
+.pk-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:14px}
+@media(max-width:800px){.pk-battle{grid-template-columns:1fr 70px 1fr;padding:20px 10px 150px}.pk-avatar{font-size:62px}.pk-vs{font-size:30px}.pk-actions{grid-template-columns:repeat(2,1fr)}}
+
 </style>
 </head>
 <body>
@@ -65,8 +126,8 @@ body.mobile-preview #deviceFrame{max-width:410px;margin:0 auto;box-shadow:0 12px
   <button id="desktopModeBtn" class="active" type="button" onclick="setDeviceMode('desktop')">🖥️ 電腦版</button>
   <button id="mobileModeBtn" type="button" onclick="setDeviceMode('mobile')">📱 手機版</button>
   <button type="button" onclick="setDeviceMode('auto')">🔄 自動</button>
-</div><div id="audioTip" style="text-align:center;margin:6px 0;font-size:13px;color:#667085">🔊 手機第一次播放請先按「啟用語音」</div>
-<div style="text-align:center;margin:6px 0"><button id="enableAudio" class="primary" type="button" onclick="enableMobileAudio()">🔊 啟用語音</button></div>
+</div><div id="audioTip" style="text-align:center;margin:6px 0;font-size:13px;color:#667085">🔊 手機版會自動啟動語音；若瀏覽器限制自動播放，第一次點擊畫面即可啟用。</div>
+<div style="text-align:center;margin:6px 0"><button id="enableAudio" class="primary" type="button" onclick="mobileVoiceUnlock()">🔊 啟用語音</button></div>
 
 <div id="deviceFrame"><div class="wrap">
 <header>
@@ -82,13 +143,13 @@ body.mobile-preview #deviceFrame{max-width:410px;margin:0 auto;box-shadow:0 12px
 <div class="tabs">
 <button class="tab active" data-tab="learn">📚 學習</button><button class="tab" data-tab="game">🎮 挑戰</button>
 <button class="tab" data-tab="mind">🧠 Mind Map</button><button class="tab" data-tab="world">🌍 世界地圖</button><button class="tab" data-tab="character">🐾 寵物</button>
-<button class="tab" data-tab="equipment">🛒 商店</button><button class="tab" data-tab="boss">👹 Boss</button><button class="tab" data-tab="achievements">🏆 成就</button><button class="tab" data-tab="ranking">📊 排行榜</button>
+<button class="tab" data-tab="equipment">🛒 商店</button><button class="tab" data-tab="boss">👹 Boss</button><button class="tab" data-tab="pk">⚔️ PK</button><button class="tab" data-tab="achievements">🏆 成就</button><button class="tab" data-tab="ranking">📊 排行榜</button>
 <button class="tab" data-tab="quests">🔤 26字母發音</button><button class="tab" data-tab="player">👤 玩家</button><button class="tab" data-tab="save">💾 存檔</button>
 </div>
 
 <div class="card quick">
 <b style="padding:10px 3px">🎮 快速選項：</b>
-<button onclick="showTab('learn')">📚 學習</button><button class="primary" onclick="startChallenge()">🎯 開始挑戰</button><button onclick="showTab('mind')">🧠 Mind Map</button><button onclick="showTab('world')">🌍 世界地圖</button><button onclick="showTab('boss')">👹 Boss</button><button onclick="showTab('quests')">🔤 26字母發音</button>
+<button onclick="showTab('learn')">📚 學習</button><button class="primary" onclick="startChallenge()">🎯 開始挑戰</button><button onclick="showTab('mind')">🧠 Mind Map</button><button onclick="showTab('world')">🌍 世界地圖</button><button onclick="showTab('boss')">👹 Boss</button><button onclick="showTab('pk')">⚔️ PK</button><button onclick="showTab('quests')">🔤 26字母發音</button>
 </div>
 
 <section id="learn" class="panel active"><div class="grid2"><div class="card">
@@ -110,8 +171,17 @@ body.mobile-preview #deviceFrame{max-width:410px;margin:0 auto;box-shadow:0 12px
 <section id="world" class="panel"><div class="card"><div class="title">🌍 七大世界區域</div><div id="worldGrid" class="map"></div></div></section>
 <section id="character" class="panel"><div class="card"><div class="title">🐾 金幣兌換寵物</div><div id="skills" class="grid"></div></div></section>
 <section id="equipment" class="panel"><div class="card"><div class="title">🛒 寵物升級商店</div><div id="equip" class="grid"></div></div></section>
-<section id="boss" class="panel"><div class="card"><div class="title">👹 區域 Boss</div><div id="bossPanel"></div></div></section>
+<section id="boss" class="panel"><div class="card">
+<div class="title">👹 Boss 關卡｜寵物 vs 怪獸</div>
+<div class="muted">選擇目前寵物後，挑戰本區守門 Boss。戰鬥會顯示攻擊閃光、技能特效、受擊動畫與勝利畫面。</div>
+<div id="bossPanel"></div>
+</div></section>
 <section id="achievements" class="panel"><div class="card"><div class="title">🏆 成就系統</div><div id="ach" class="grid"></div></div></section>
+<section id="pk" class="panel"><div class="card">
+<div class="title">⚔️ PK｜玩家寵物對戰</div>
+<div class="muted">選擇自己的寵物，與其他玩家的 AI 寵物對手進行回合制對戰。勝利可獲得 XP、星星與金幣。</div>
+<div id="pkPanel"></div>
+</div></section>
 <section id="ranking" class="panel"><div class="card">
 <div class="title">📊 排行榜</div>
 <div class="title" style="font-size:18px;margin-top:12px">👤 玩家排行榜</div>
@@ -172,7 +242,7 @@ const BOSS_SKILLS=["🔊 音爆","🧩 音節鎖","🔥 重音焰","📖 故事�
 const KEY="phonics172_v6_real_playable";
 let state=loadState(), quiz={items:[],i:0,answered:false}, battle={};
 
-function baseState(){return{xP:0,xp:0,stars:0,combo:0,hp:100,level:1,done:[],bossDone:[],coins:0,gem:0,playerName:"玩家",ownedPets:[],currentPet:null,petLevels:{},petExp:{},shopItems:{},items:{hint:3,potion:2}}}
+function baseState(){return{xP:0,xp:0,stars:0,combo:0,hp:100,level:1,done:[],bossDone:[],coins:0,gem:0,playerName:"玩家",ownedPets:[],currentPet:null,petLevels:{},petExp:{},shopItems:{},pkWins:0,pkLosses:0,pkBattles:0,items:{hint:3,potion:2}}}
 function loadState(){try{const s=JSON.parse(localStorage.getItem(KEY));return Object.assign(baseState(),s||{})}catch(e){return baseState()}}
 function save(){localStorage.setItem(KEY,JSON.stringify(state));updateHUD();renderAll()}
 
@@ -189,22 +259,46 @@ function enableMobileAudio(){
   const btn=document.getElementById("enableAudio");if(btn)btn.textContent="✅ 語音已啟用";
   setTimeout(()=>{if(tip)tip.style.display="none";},1200);
 }
+
+function initMobileVoice(){
+  if(!("speechSynthesis" in window))return;
+  const start=()=>{
+    try{
+      const voices=window.speechSynthesis.getVoices();
+      if(voices.length) window.speechSynthesis.resume();
+    }catch(e){}
+  };
+  start();
+  window.speechSynthesis.onvoiceschanged=start;
+  // Try an automatic, near-silent unlock on supported browsers.
+  // Some mobile browsers require a user gesture; those will be unlocked on the first tap.
+  setTimeout(start,200);
+}
+function mobileVoiceUnlock(){
+  if(!("speechSynthesis" in window))return;
+  try{
+    window.speechSynthesis.resume();
+    const u=new SpeechSynthesisUtterance("");
+    u.lang="en-US";
+    u.volume=0;
+    u.rate=2;
+    window.speechSynthesis.speak(u);
+    const tip=document.getElementById("audioTip");
+    if(tip){tip.textContent="✅ 手機語音已自動啟用";setTimeout(()=>tip.style.display="none",900);}
+    const btn=document.getElementById("enableAudio");
+    if(btn){btn.textContent="✅ 語音已啟用";}
+  }catch(e){}
+}
 function setDeviceMode(mode){
   const body=document.body,frame=document.getElementById("deviceFrame");
   const d=document.getElementById("desktopModeBtn"),m=document.getElementById("mobileModeBtn");
-  body.classList.toggle("mobile-preview",mode==="mobile");
-  d.classList.toggle("active",mode==="desktop");
-  m.classList.toggle("active",mode==="mobile");
-  if(mode==="desktop"){frame.style.maxWidth="100%";}
-  else if(mode==="mobile"){frame.style.maxWidth="410px";}
-  else{
-    const isMobile=window.innerWidth<=700;
-    body.classList.toggle("mobile-preview",isMobile);
-    d.classList.toggle("active",!isMobile);
-    m.classList.toggle("active",isMobile);
-    frame.style.maxWidth=isMobile?"410px":"100%";
-  }
+  const isMobile=mode==="mobile"||(mode==="auto"&&window.innerWidth<=700);
+  body.classList.toggle("mobile-preview",isMobile);
+  if(d)d.classList.toggle("active",!isMobile);
+  if(m)m.classList.toggle("active",isMobile);
+  if(frame)frame.style.maxWidth=isMobile?"410px":"100%";
   localStorage.setItem("phonics172_device_mode",mode);
+  if(isMobile) setTimeout(initMobileVoice,120);
 }
 function normalize(){
   state.xp=Number(state.xp)||0;
@@ -218,7 +312,7 @@ function normalize(){
   if(typeof state.playerName!=="string"||!state.playerName.trim())state.playerName="玩家";
   state.playerName=state.playerName.trim().slice(0,20);
   if(!Array.isArray(state.ownedPets))state.ownedPets=[];
-  if(typeof state.currentPet!=="string")state.currentPet=null;
+  if(typeof state.currentPet!=="string")state.currentPet=null;if(typeof state.pkWins!=="number")state.pkWins=0;if(typeof state.pkLosses!=="number")state.pkLosses=0;if(typeof state.pkBattles!=="number")state.pkBattles=0;
   if(!state.petLevels||typeof state.petLevels!=="object")state.petLevels={};
   if(!state.petExp||typeof state.petExp!=="object")state.petExp={};
   if(!state.shopItems||typeof state.shopItems!=="object")state.shopItems={};
@@ -291,7 +385,7 @@ function speak(t){return speakText(t,"en-US",.86);}
 
 
 
-function showTab(id){document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("active",p.id===id));document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===id));if(id==="learn")renderLearn();if(id==="game"){if(!quiz.items.length)buildQuiz();else renderQuestion()}if(id==="mind")renderMind();if(id==="world")renderWorld();if(id==="character")renderCharacter();if(id==="equipment")renderEquipment();if(id==="boss")renderBoss();if(id==="achievements")renderAchievements();if(id==="ranking")renderRanking();if(id==="quests")renderQuests();if(id==="save")renderSave()}
+function showTab(id){document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("active",p.id===id));document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===id));if(id==="learn")renderLearn();if(id==="game"){if(!quiz.items.length)buildQuiz();else renderQuestion()}if(id==="mind")renderMind();if(id==="world")renderWorld();if(id==="character")renderCharacter();if(id==="equipment")renderEquipment();if(id==="boss")renderBoss();if(id==="pk")renderPK();if(id==="achievements")renderAchievements();if(id==="ranking")renderRanking();if(id==="quests")renderQuests();if(id==="save")renderSave()}
 document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>showTab(b.dataset.tab))
 
 function populateLevels(){const s=document.getElementById("level"),m=document.getElementById("mindLevel");s.innerHTML="";m.innerHTML="";for(let n=1;n<=172;n++){const o=document.createElement("option");o.value=n;o.textContent=String(n).padStart(3,"0")+" · "+get(n).pattern+(unlocked(n)?"":" 🔒");s.appendChild(o);m.appendChild(o.cloneNode(true))}s.value=state.level;m.value=state.level}
@@ -586,6 +680,177 @@ function mindInfo(k){
       <div style="margin-top:12px"><button class="primary small" onclick='playStoryWithSubtitles(get(${Number(state.level)}).words[0],get(${Number(state.level)}))'>🎬 播放故事</button></div>`:"";
   }
 }
+
+const PK_OPPONENTS=[
+  {name:"小明",pet:"dragon",power:2},
+  {name:"Amy",pet:"owl",power:3},
+  {name:"Story Hunter",pet:"fox",power:4},
+  {name:"Phonics Master",pet:"phoenix",power:5},
+  {name:"Word Explorer",pet:"cat",power:2}
+];
+function pkPetData(){
+  if(!state.currentPet)return null;
+  const p=PETS.find(x=>x.id===state.currentPet);if(!p)return null;
+  return {id:p.id,name:p.name,emoji:p.emoji,level:Number(state.petLevels?.[p.id]||1),exp:Number(state.petExp?.[p.id]||0)};
+}
+function pkNewMatch(){
+  const me=pkPetData();
+  if(!me){alert("🐾 請先到「🐾 寵物」選擇一隻寵物。");showTab("character");return}
+  const opp=PK_OPPONENTS[Math.floor(Math.random()*PK_OPPONENTS.length)];
+  const opPet=PETS.find(x=>x.id===opp.pet)||PETS[0];
+  const lv=opp.power+Math.floor(state.level/30);
+  window.pkBattle={
+    opponent:opp.name,
+    my:me,
+    op:{id:opPet.id,name:opPet.name,emoji:opPet.emoji,level:lv,exp:lv*20},
+    myHp:100,opHp:100,active:true,turn:"player",
+    log:[`⚔️ ${me.name} VS ${opPet.name} · 對手：${opp.name}`],quiz:makePKPhonicsQuestion(),busy:false
+  };
+  renderPK();
+}
+function renderPK(){
+  const root=document.getElementById("pkPanel");if(!root)return;
+  const me=pkPetData();
+  if(!me){
+    root.innerHTML=`<div class="tile"><div class="icon">🐾</div><b>請先選擇寵物</b><p class="muted">進入「🐾 寵物」選擇你的伙伴。</p><button class="primary" onclick="showTab('character')">🐾 選擇寵物</button></div>`;
+    return;
+  }
+  if(!window.pkBattle||!window.pkBattle.active){
+    root.innerHTML=`<div class="tile"><div class="icon">${me.emoji}</div><b>${esc(me.name)} · Lv.${me.level}</b>
+      <p>目前 PK：${state.pkWins||0} 勝 / ${state.pkLosses||0} 敗</p>
+      <button class="primary" onclick="pkNewMatch()">⚔️ 開始 PK</button></div>`;
+    return;
+  }
+  const b=window.pkBattle;
+  const q=b.quiz||makePKPhonicsQuestion();
+  b.quiz=q;
+  root.innerHTML=`<div class="pk-arena">
+    <div class="pk-top"><b>⚔️ PK · 26 LETTER PHONICS BATTLE</b><br>
+      <small>玩家：${esc(state.playerName)} · ${esc(b.my.name)}　VS　${esc(b.opponent)} · ${esc(b.op.name)}</small>
+    </div>
+    <div class="pk-battle">
+      <div class="pk-side"><div class="pk-avatar">${b.my.emoji}</div><div class="pk-name">${esc(b.my.name)}</div>
+        <div class="pk-owner">👤 ${esc(state.playerName)}</div><div class="pk-lv">Lv.${b.my.level}</div>
+        <div class="pk-hp"><i style="width:${b.myHp}%"></i></div><small>${b.myHp}/100 HP</small></div>
+      <div class="pk-vs">VS</div>
+      <div class="pk-side pk-right"><div class="pk-avatar">${b.op.emoji}</div><div class="pk-name">${esc(b.op.name)}</div>
+        <div class="pk-owner">👤 ${esc(b.opponent)}</div><div class="pk-lv">Lv.${b.op.level}</div>
+        <div class="pk-hp"><i style="width:${b.opHp}%"></i></div><small>${b.opHp}/100 HP</small></div>
+    </div>
+
+    <div class="pk-log" id="pkLog">${b.log.slice(0,4).join("<br>")}</div>
+
+    <div style="margin:10px 18px 0;padding:14px;background:#ffffffee;border-radius:16px;text-align:center">
+      <div style="font-size:13px;color:#64748b">26 字母自然發音填空攻擊</div>
+      <div style="font-size:30px;font-weight:1000;margin-top:4px">${esc(q.letter)}</div>
+      <button class="primary small" onclick='speakEnglish(${JSON.stringify(q.letter)})'>🔊 播放字母發音</button>
+      <div style="font-size:20px;font-weight:900;margin-top:8px">哪一個選項是 <b>${esc(q.letter)}</b> 的自然發音單字？</div>
+      <div style="font-size:26px;font-weight:1000;margin-top:7px;letter-spacing:2px">_${esc(q.rest)}</div>
+      <div id="pkChoices" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px">
+        ${q.options.map((o,i)=>`<button type="button" onclick="pkAnswer(${i})">🔊 ${esc(o.rest)}<br><small>${esc(o.word)}</small></button>`).join("")}
+      </div>
+      <div class="muted" style="margin-top:8px">${esc(q.zh)}</div>
+    </div>
+
+    <div class="pk-fx" id="pkFx"><b id="pkFxText">💥</b></div>
+    <div class="pk-actions" style="position:static;transform:none;width:auto;margin:10px 18px 0;grid-template-columns:repeat(2,1fr)">
+      <button onclick="pkHint()">💡 Hint</button>
+      <button onclick="pkNewMatch()">🔄 New Opponent</button>
+      <button onclick="showTab('mind')">🧠 Mind Map</button>
+      <button onclick="showTab('quests')">🔤 26 Letters</button>
+    </div>
+
+    <div class="pk-win" id="pkWin"><div><h2 id="pkWinTitle">🏆 WIN!</h2><p id="pkWinText"></p>
+      <button class="primary" onclick="pkClose()">✨ Continue</button></div></div>
+  </div>`;
+}
+
+
+
+const PK_LETTER_WORDS=[
+["A","apple","pple","蘋果"],["B","ball","all","球"],["C","cat","at","貓"],["D","dog","og","狗"],
+["E","egg","gg","雞蛋"],["F","fish","ish","魚"],["G","goat","oat","山羊"],["H","hat","at","帽子"],
+["I","igloo","gloo","冰屋"],["J","jet","et","噴射機"],["K","kite","ite","風箏"],["L","lion","ion","獅子"],
+["M","moon","oon","月亮"],["N","net","et","網子"],["O","octopus","ctopus","章魚"],["P","pig","ig","豬"],
+["Q","queen","ueen","女王"],["R","rabbit","abbit","兔子"],["S","sun","un","太陽"],["T","top","op","頂端"],
+["U","up","p","向上"],["V","van","an","廂型車"],["W","web","eb","網"],["X","box","ox","盒子"],
+["Y","yellow","ellow","黃色"],["Z","zebra","ebra","斑馬"]
+];
+function makePKPhonicsQuestion(){
+  const x=PK_LETTER_WORDS[Math.floor(Math.random()*PK_LETTER_WORDS.length)];
+  const pool=PK_LETTER_WORDS.filter(v=>v[0]!==x[0]);
+  const distract=shuffle(pool).slice(0,3);
+  const opts=shuffle([
+    {word:x[1],rest:x[2],correct:true},
+    ...distract.map(v=>({word:v[1],rest:v[1].slice(1),correct:false}))
+  ]);
+  return {letter:x[0],word:x[1],rest:x[2],zh:`${x[0]} → ${x[1]}（${x[3]}）`,options:opts};
+}
+function pkAnswer(index){
+  const b=window.pkBattle;if(!b||!b.active||b.busy)return;
+  b.busy=true;
+  const q=b.quiz,o=q.options[index];
+  speakEnglish(o.word);
+  if(o.correct){
+    const dmg=22+Math.floor(Math.random()*10)+Math.floor(b.my.level*1.3);
+    b.opHp=Math.max(0,b.opHp-dmg);
+    b.log.unshift(`✅ 正確！${q.letter} → ${o.word}，${b.my.name} 攻擊 ${dmg} HP！`);
+    showPkFx("💥","pk-right");
+    if(b.opHp<=0){pkWin();return}
+    setTimeout(()=>{b.quiz=makePKPhonicsQuestion();b.busy=false;save();renderPK()},650);
+  }else{
+    b.myHp=Math.max(0,b.myHp-16);
+    b.log.unshift(`❌ ${o.word} 不是正確答案！對手反擊 -16 HP。`);
+    showPkFx("⚡","pk-left");
+    if(b.myHp<=0){pkLose();return}
+    setTimeout(()=>{b.quiz=makePKPhonicsQuestion();b.busy=false;save();renderPK()},650);
+  }
+}
+function pkHint(){
+  const b=window.pkBattle;if(!b||!b.active)return;
+  const q=b.quiz||makePKPhonicsQuestion();b.quiz=q;
+  const right=q.options.find(o=>o.correct);
+  b.log.unshift(`💡 Hint：${q.letter} → _${q.rest} = ${right.word}`);
+  speakEnglish(right.word);
+  renderPK();
+}
+function enemyPkTurn(){
+  const b=window.pkBattle;if(!b||!b.active)return;
+  setTimeout(()=>{
+    const raw=10+Math.floor(Math.random()*12)+Math.floor(b.op.level*.8);
+    const dmg=b.guarding?Math.max(3,Math.floor(raw*.45)):raw;
+    b.myHp=Math.max(0,b.myHp-dmg);b.guarding=false;
+    b.log.unshift(`👾 ${b.op.name} 反擊！-${dmg} HP`);
+    showPkFx("⚡","pk-left");
+    if(b.myHp<=0){pkLose();return}
+    save();renderPK();
+  },450);
+}
+function showPkFx(symbol,target){
+  const f=document.getElementById("pkFx"),t=document.getElementById("pkFxText"),e=document.querySelector(target==="pk-left"?".pk-side:not(.pk-right)":".pk-right");
+  if(t)t.textContent=symbol;
+  if(f){f.classList.remove("show");void f.offsetWidth;f.classList.add("show")}
+  if(e){e.animate([{transform:"translateX(0)"},{transform:"translateX(-12px)"},{transform:"translateX(12px)"},{transform:"translateX(0)"}],{duration:360});}
+}
+function pkWin(){
+  const b=window.pkBattle;b.active=false;
+  state.pkWins=(state.pkWins||0)+1;state.pkBattles=(state.pkBattles||0)+1;
+  state.xp+=50;state.stars+=3;state.coins=(state.coins||0)+20;
+  save();renderPK();
+  const w=document.getElementById("pkWin");if(w)w.classList.add("show");
+  const t=document.getElementById("pkWinTitle"),p=document.getElementById("pkWinText");
+  if(t)t.textContent="🏆 PK VICTORY!";
+  if(p)p.textContent=`${b.my.name} 擊敗 ${b.op.name}！ +50 XP · +3⭐ · +20🪙`;
+}
+function pkLose(){
+  const b=window.pkBattle;b.active=false;
+  state.pkLosses=(state.pkLosses||0)+1;state.pkBattles=(state.pkBattles||0)+1;save();renderPK();
+  const w=document.getElementById("pkWin");if(w)w.classList.add("show");
+  const t=document.getElementById("pkWinTitle"),p=document.getElementById("pkWinText");
+  if(t)t.textContent="💫 PK DEFEAT";
+  if(p)p.textContent=`${b.my.name} 被 ${b.op.name} 擊敗，再試一次！`;
+}
+function pkClose(){window.pkBattle=null;renderPK()}
 function renderWorld(){document.getElementById("worldGrid").innerHTML=REGIONS.map(r=>{const done=state.done.filter(n=>n>=r.start&&n<=r.end).length,total=r.end-r.start+1,p=Math.round(done/total*100);let nums="";for(let n=r.start;n<=r.end;n++)nums+=`<span class="lvl ${state.done.includes(n)?"done ":""}${n===state.level?"now ":""}${unlocked(n)?"":"lock"}">${n}</span>`;return `<div class="region"><h3>${r.name}</h3><div class="muted">${r.desc}</div><p>${done}/${total} · ${p}%</p><div class="bar"><i style="width:${p}%"></i></div><div class="mini">${nums}</div><button onclick="go(${r.start})">進入</button></div>`}).join("")}
 function go(n){if(!unlocked(n)&&!state.done.includes(n)){alert("🔒 尚未解鎖");return}state.level=n;save();populateLevels();renderLearn();showTab("learn")}
 function renderCharacter(){
@@ -655,8 +920,109 @@ function renderEquipment(){
       </div>`;
     }).join("");
 }
-function renderBoss(){const r=reg(state.level),open=state.done.includes(r.end);document.getElementById("bossPanel").innerHTML=`<div class="tile"><h3>${r.name} · 區域 Boss</h3><p>守門關卡：第${r.end}關</p><p>技能：${BOSS_SKILLS[r.id-1]}</p><p>${open?"✅ 已解鎖":"🔒 完成守門關後解鎖"}</p><button class="primary" ${open?"":"disabled"} onclick="bossFight(${r.id})">⚔️ 挑戰 Boss</button></div>`}
-function bossFight(rid){const r=REGIONS.find(x=>x.id===rid),d=get(r.end);const a=confirm("Boss第一階段：播放："+d.words[0].word);if(a)speak(d.words[0].word);const b=confirm("Boss第二階段：音節："+(d.words[1].syllables||[]).join(" · "));const c=confirm("Boss第三階段：故事："+(d.story||""));if(a&&b&&c){state.xp+=50;state.stars+=5;if(!state.bossDone.includes(rid))state.bossDone.push(rid);save();alert("🏆 Boss 擊破！ +50 XP +5⭐")}else alert("👹 Boss 守住了，再試一次")}
+function renderBoss(){
+  const r=reg(state.level),open=state.done.includes(r.end),pet=state.currentPet?PETS.find(p=>p.id===state.currentPet):null;
+  const petLevel=pet?(state.petLevels?.[pet.id]||1):0;
+  const bossKey="boss_"+r.id;
+  if(!window.bossBattle||window.bossBattle.region!==r.id){
+    window.bossBattle={region:r.id,playerHp:100,bossHp:100,bossMax:100,active:false};
+  }
+  const b=window.bossBattle;
+  document.getElementById("bossPanel").innerHTML=`
+    ${open?`
+    <div class="boss-arena">
+      <div class="boss-stage"></div>
+      <div class="boss-log" id="bossLog">${b.active?"⚔️ Boss 戰鬥中！":"👹 準備挑戰 "+esc(r.name)+" Boss"}</div>
+      <div class="boss-fighter boss-player" id="bossPlayer">
+        <div class="boss-avatar">${pet?pet.emoji:"🧙‍♂️"}</div>
+        <div class="boss-name">${pet?esc(pet.name):"Phonics Hero"}</div>
+        ${pet?`<div class="pet-badge">🐾 Lv.${petLevel}</div>`:`<div class="pet-badge">請先選擇寵物</div>`}
+        <div class="boss-hp"><i id="bossPlayerHp" style="width:${b.playerHp}%"></i></div>
+        <small style="color:#fff">${b.playerHp}/100 HP</small>
+      </div>
+      <div class="boss-vs">VS</div>
+      <div class="boss-fighter boss-enemy" id="bossEnemy">
+        <div class="boss-avatar">${["👹","🐲","👾","🦂","🧟","🐉","🌌"][r.id-1]}</div>
+        <div class="boss-name">${esc(r.name)} Boss</div>
+        <div class="pet-badge" style="background:#fee2e2;color:#991b1b">⚔️ Lv.${Math.max(1,state.level)}</div>
+        <div class="boss-hp"><i id="bossEnemyHp" style="width:${Math.max(0,b.bossHp)}%"></i></div>
+        <small style="color:#fff">${Math.max(0,b.bossHp)}/100 HP</small>
+      </div>
+      <div class="fx" id="bossFx"><div class="burst" id="bossFxText">💥</div></div>
+      <div class="boss-win" id="bossWin">
+        <div><h2>🏆 BOSS DEFEATED!</h2><p>${pet?esc(pet.name):"你的伙伴"} 成功擊破 ${esc(r.name)} Boss！</p>
+        <button class="primary" onclick="closeBossWin()">✨ 收下獎勵</button></div>
+      </div>
+      <div class="boss-actions">
+        <button class="primary" onclick="bossAction('sound')" ${pet?"":"disabled"}>🔊 Sound Attack<br><small>發音攻擊</small></button>
+        <button onclick="bossAction('syllable')" ${pet?"":"disabled"}>🧩 Syllable Slash<br><small>音節切割</small></button>
+        <button onclick="bossAction('story')" ${pet?"":"disabled"}>📖 Story Magic<br><small>故事魔法</small></button>
+        <button onclick="bossAction('pet')" ${pet?"":"disabled"}>🐾 Pet Skill<br><small>寵物技能</small></button>
+        <button onclick="bossReset()">🔄 Restart</button>
+        <button onclick="showTab('character')">🐾 Change Pet</button>
+        <button onclick="showTab('mind')">🧠 Mind Map</button>
+        <button onclick="showTab('learn')">📚 Learning</button>
+      </div>
+    </div>`:
+    `<div class="tile"><div class="icon">🔒</div><b>Boss 尚未解鎖</b><p>${esc(r.name)} 守門關：第${r.end}關</p><p>完成第 ${r.end} 關後即可挑戰 Boss。</p></div>`}
+  `;
+}
+function bossFight(rid){const r=REGIONS.find(x=>x.id===rid);if(r&&state.level>=r.start)showTab("boss");}
+function bossAction(type){
+  const b=window.bossBattle;if(!b)return;
+  const r=reg(state.level),pet=state.currentPet?PETS.find(p=>p.id===state.currentPet):null;
+  if(!pet){alert("請先到 🐾 寵物 選擇一隻寵物");return}
+  if(b.bossHp<=0)return;
+  const names={sound:["🔊 Sound Attack",18],syllable:["🧩 Syllable Slash",24],story:["📖 Story Magic",30],pet:["🐾 Pet Skill",36]};
+  const data=names[type]||names.sound;
+  const ws=get(state.level).words||[];
+  const w=ws[Math.floor(Math.random()*Math.max(1,ws.length))]||{word:get(state.level).pattern||"word"};
+  let dmg=data[1]+Math.floor(Math.random()*10)+Math.floor((state.petLevels?.[pet.id]||1)*1.5);
+  if(type==="pet")dmg+=10;
+  b.active=true;
+  b.bossHp=Math.max(0,b.bossHp-dmg);
+  speakEnglish(w.word);
+  const log=document.getElementById("bossLog");if(log)log.textContent=`${data[0]}！${pet.name} 使用 ${w.word}，造成 ${dmg} 傷害！`;
+  showBossFx(type==="pet"?"✨":"💥", "bossEnemy");
+  updateBossBars();
+  if(b.bossHp<=0){
+    setTimeout(()=>{
+      state.xp+=80;state.stars+=8;state.coins=(state.coins||0)+30;
+      const r=reg(state.level);
+      if(!state.bossDone.includes(r.id))state.bossDone.push(r.id);
+      save();
+      const win=document.getElementById("bossWin");if(win)win.classList.add("show");
+      const p=document.getElementById("bossEnemy");if(p)p.classList.add("boss-hit");
+      updateBossBars();
+    },350);
+    return;
+  }
+  setTimeout(()=>{
+    const enemyDmg=5+Math.floor(Math.random()*11);
+    b.playerHp=Math.max(0,b.playerHp-enemyDmg);
+    const l=document.getElementById("bossLog");if(l)l.textContent=`👹 Boss 反擊！造成 ${enemyDmg} 傷害。`;
+    showBossFx("⚡","bossPlayer");updateBossBars();
+    if(b.playerHp<=0){
+      b.playerHp=100;
+      const l2=document.getElementById("bossLog");if(l2)l2.textContent="💫 宠物保護你，HP 回復到 100！";
+      showBossFx("🛡️","bossPlayer");updateBossBars();
+    }
+  },500);
+}
+function showBossFx(symbol,targetId){
+  const fx=document.getElementById("bossFx"),txt=document.getElementById("bossFxText"),target=document.getElementById(targetId);
+  if(txt)txt.textContent=symbol;
+  if(fx){fx.classList.remove("show");void fx.offsetWidth;fx.classList.add("show")}
+  if(target){target.classList.remove("boss-hit");void target.offsetWidth;target.classList.add("boss-hit")}
+}
+function updateBossBars(){
+  const b=window.bossBattle;if(!b)return;
+  const p=document.getElementById("bossPlayerHp"),e=document.getElementById("bossEnemyHp");
+  if(p)p.style.width=Math.max(0,b.playerHp)+"%";
+  if(e)e.style.width=Math.max(0,b.bossHp)+"%";
+}
+function bossReset(){const r=reg(state.level);window.bossBattle={region:r.id,playerHp:100,bossHp:100,bossMax:100,active:false};renderBoss()}
+function closeBossWin(){const w=document.getElementById("bossWin");if(w)w.classList.remove("show");renderBoss()}
 function buyShopItem(id){
   const item=SHOP_ITEMS.find(x=>x.id===id);
   if(!item)return;
@@ -787,7 +1153,7 @@ function renderQuests(){
   if(t)t.textContent=`${n}/26`;
   if(b)b.style.width=(n/26*100)+"%";
 }
-function renderSave(){const inp=document.getElementById("playerNameInput");if(inp)inp.value=state.playerName;document.getElementById("saveInfo").innerHTML=`👤 玩家：<b>${esc(state.playerName)}</b><br>🎯 通關：${state.done.length}/172<br>✨ XP：${state.xp}<br>⭐ 星星：${state.stars}<br>🪙 金幣：${state.coins||0}<br>🐾 寵物：${state.currentPet?(PETS.find(p=>p.id===state.currentPet)?.emoji+" "+PETS.find(p=>p.id===state.currentPet)?.name):"未選擇"}<br>💾 存檔：已啟用`}
+function renderSave(){const inp=document.getElementById("playerNameInput");if(inp)inp.value=state.playerName;document.getElementById("saveInfo").innerHTML=`👤 玩家：<b>${esc(state.playerName)}</b><br>🎯 通關：${state.done.length}/172<br>✨ XP：${state.xp}<br>⭐ 星星：${state.stars}<br>🪙 金幣：${state.coins||0}<br>🐾 寵物：${state.currentPet?(PETS.find(p=>p.id===state.currentPet)?.emoji+" "+PETS.find(p=>p.id===state.currentPet)?.name):"未選擇"}<br>⚔️ PK：${state.pkWins||0} 勝 / ${state.pkLosses||0} 敗<br>💾 存檔：已啟用`}
 function setPlayerName(){const inp=document.getElementById("playerNameInput");const name=(inp?.value||"").trim().slice(0,20);if(!name){alert("請輸入玩家名稱");return}state.playerName=name;save();renderSave();alert("✅ 玩家名稱已儲存："+name)}
 function changePlayerName(){const name=prompt("請輸入新的玩家名稱：",state.playerName);if(name===null)return;const n=name.trim().slice(0,20);if(!n){alert("玩家名稱不能空白");return}state.playerName=n;save();renderSave();}
 function exportSave(){const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="172組合音故事單詞卡_V6_存檔.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),800)}
@@ -795,5 +1161,8 @@ function resetSave(){if(confirm("確定重置全部進度？")){localStorage.rem
 function renderAll(){renderWorld();renderCharacter();renderEquipment();renderBoss();renderAchievements();renderRanking();renderQuests();renderSave()}
 normalize();populateLevels();renderLearn();updateHUD();renderAll();renderPlayer();buildQuiz();if(state.playerName==="玩家"){setTimeout(()=>{const n=prompt("🎮 歡迎來到 172組合音故事單詞卡！\n請輸入你的玩家名稱：","玩家");if(n!==null&&n.trim()){state.playerName=n.trim().slice(0,20);save();}},250)}
 window.addEventListener("resize",()=>{if(localStorage.getItem("phonics172_device_mode")==="auto")setDeviceMode("auto")});
+window.addEventListener("DOMContentLoaded",()=>setTimeout(initMobileVoice,300));
+["touchstart","pointerdown","click"].forEach(ev=>window.addEventListener(ev,mobileVoiceUnlock,{once:true,passive:true}));
+
 </script>
 </body></html>
