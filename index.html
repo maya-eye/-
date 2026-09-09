@@ -197,14 +197,24 @@ border:2px solid #6366f1;box-shadow:0 18px 45px #11182733}
   <p class="muted">隨機抽取一隻寵物</p>
   <p>🪙 100 金幣</p>
   <button class="primary" type="button" onclick="buyRandomPetEgg()">🥚 購買並開蛋</button>
-</div><div style="grid-column:1/-1;margin-bottom:8px;padding:10px 12px;border-radius:12px;background:#f5f3ff;border:1px solid #ddd6fe;font-weight:900">🌌 傳說神獸／外星生物：99,999 金幣解鎖，解鎖後可自行上傳圖片。</div><div id="equip" class="grid"></div></div></section>
+</div><div style="grid-column:1/-1;margin-bottom:8px;padding:10px 12px;border-radius:12px;background:#f5f3ff;border:1px solid #ddd6fe;font-weight:900">🌌 傳說神獸／外星生物：99,999 金幣解鎖，解鎖後可自行上傳圖片。</div><div id="renameCardNotice" style="grid-column:1/-1;margin:0 0 10px;padding:11px 13px;border-radius:12px;background:#f5f3ff;border:1px solid #ddd6fe;font-weight:900">
+👤 玩家換名卡：<b>1,000 金幣</b>｜🐾 寵物換名卡：<b>500 金幣</b>　（購買後各恢復 1 次名稱修改機會）
+</div><div id="equip" class="grid"></div></div></section>
 <section id="boss" class="panel"><div class="card">
 <div class="title">👹 Boss 關卡｜寵物 vs 怪獸</div>
 <div class="muted">選擇目前寵物後，挑戰本區守門 Boss。戰鬥會顯示攻擊閃光、技能特效、受擊動畫與勝利畫面。</div>
 <div id="bossPanel"></div>
 </div></section>
 <section id="achievements" class="panel"><div class="card"><div class="title">🏆 成就系統</div><div id="ach" class="grid"></div></div></section>
-<section id="pk" class="panel"><div class="card">
+<section id="pk" class="panel"><div class="card"><div id="pkBattleRules" style="margin-bottom:12px;padding:14px;border:2px solid #7c3aed;border-radius:16px;background:linear-gradient(135deg,#faf5ff,#eef2ff)">
+<b style="font-size:20px">⚔️ 玩家寵物對戰說明</b>
+<div style="margin-top:7px;line-height:1.7">
+🐾 選擇出戰寵物 → 🎯 答對拼讀題攻擊對手 → ❤️ 顯示並扣除實際寵物 HP。<br>
+🚨 <b>寵物 HP 歸零後會消失並永久從收藏刪除</b>，需要重新購買或抽取新的寵物。<br>
+🎁 每次新兌換／購買／抽取寵物，附送 <b>1 次免費改名機會</b>。
+</div>
+<div style="margin-top:9px;font-weight:900">❤️ 初始 HP：🦊500｜🐱1,000｜🐶1,880｜🦉3,000｜🐲5,000｜🔥8,000｜🐉10,000｜🐯15,000｜🐢12,000</div>
+</div>
 <div class="title">⚔️ PK｜玩家寵物對戰</div>
 <div class="pk-online">
   <b>🌐 真人玩家 PK 房間</b>
@@ -257,7 +267,7 @@ border:2px solid #6366f1;box-shadow:0 18px 45px #11182733}
 <p class="muted">玩家名稱會保存在本機存檔中。</p></div></section>
 <section id="save" class="panel"><div class="card"><div class="title">💾 存檔管理</div>
 <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0">
-<input id="playerNameInput" autocomplete="off" autocapitalize="words" maxlength="20" placeholder="輸入玩家名稱" style="flex:1;min-width:220px;padding:11px 13px;border:1px solid var(--line);border-radius:12px;font:inherit">
+
 <button class="primary" onclick="setPlayerName()">💾 儲存玩家名稱</button>
 <button onclick="changePlayerName()">✏️ 修改名稱</button>
 </div>
@@ -296,13 +306,15 @@ const SHOP_ITEMS=[
   {id:"pet_snack",emoji:"🍪",name:"星星零食",cost:60,desc:"寵物經驗值 +25",effect:"+25 Pet EXP"},
   {id:"pet_orb",emoji:"🔮",name:"寵物能量球",cost:120,desc:"寵物等級 +1",effect:"+1 Pet Level · +10 HP"},
   {id:"pet_badge",emoji:"🏅",name:"成長徽章",cost:250,desc:"寵物等級 +2",effect:"+2 Pet Levels · +20 HP"},
-  {id:"pet_crown",emoji:"👑",name:"寵物王冠",cost:500,desc:"寵物等級 +5",effect:"+5 Pet Levels · +50 HP"}
+  {id:"pet_crown",emoji:"👑",name:"寵物王冠",cost:500,desc:"寵物等級 +5",effect:"+5 Pet Levels · +50 HP"},
+  {id:"player_rename_card",emoji:"👤",name:"玩家換名卡",cost:1000,desc:"恢復玩家名稱 1 次修改機會",effect:"再次修改玩家名稱 1 次"},
+  {id:"pet_rename_card",emoji:"🐾",name:"寵物換名卡",cost:500,desc:"恢復目前寵物 1 次改名機會",effect:"再次修改目前寵物名稱 1 次"}
 ];
 const BOSS_SKILLS=["🔊 音爆","🧩 音節鎖","🔥 重音焰","📖 故事幻境","⚡ Combo反擊","🛡️ 守護護盾","🌌 終極共鳴"];
 const KEY="phonics172_v6_real_playable";
 let state=loadState(), quiz={items:[],i:0,answered:false}, battle={};
 
-function baseState(){return{xP:0,xp:0,stars:0,combo:0,hp:100,level:1,done:[],bossDone:[],coins:0,gem:0,playerName:"玩家",ownedPets:[],currentPet:null,petLevels:{},petExp:{},petCustomNames:{},shopItems:{},legendaryBeastUnlocked:false,legendaryBeastImage:"",legendaryBeastName:"傳說神獸",pkWins:0,pkLosses:0,pkBattles:0,items:{hint:3,potion:2}}}
+function baseState(){return{xP:0,xp:0,stars:0,combo:0,hp:100,level:1,done:[],bossDone:[],coins:0,gem:0,playerName:"玩家",playerNameChangeUsed:false,ownedPets:[],currentPet:null,petLevels:{},petExp:{},petCustomNames:{},petRenameUsed:{},shopItems:{},legendaryBeastUnlocked:false,legendaryBeastImage:"",legendaryBeastName:"傳說神獸",pkWins:0,pkLosses:0,pkBattles:0,items:{hint:3,potion:2}}}
 function loadState(){try{const s=JSON.parse(localStorage.getItem(KEY));return Object.assign(baseState(),s||{})}catch(e){return baseState()}}
 function save(){localStorage.setItem(KEY,JSON.stringify(state));updateHUD();renderAll()}
 
@@ -425,10 +437,10 @@ function normalize(){
   if(!Array.isArray(state.bossDone))state.bossDone=[];
   if(!state.items)state.items={hint:3,potion:2};
   if(typeof state.playerName!=="string"||!state.playerName.trim())state.playerName="玩家";
-  state.playerName=state.playerName.trim().slice(0,20);
+  state.playerName=state.playerName.trim().slice(0,20); if(typeof state.playerNameChangeUsed!=="boolean")state.playerNameChangeUsed=false;
   if(!Array.isArray(state.ownedPets))state.ownedPets=[];
   if(typeof state.currentPet!=="string")state.currentPet=null;if(typeof state.pkWins!=="number")state.pkWins=0;if(typeof state.pkLosses!=="number")state.pkLosses=0;if(typeof state.pkBattles!=="number")state.pkBattles=0;
-  if(!state.petLevels||typeof state.petLevels!=="object")state.petLevels={};
+  if(!state.petLevels||typeof state.petLevels!=="object")state.petLevels={}; if(!state.petRenameUsed||typeof state.petRenameUsed!=="object")state.petRenameUsed={};
   if(!state.petExp||typeof state.petExp!=="object")state.petExp={};
   if(!state.shopItems||typeof state.shopItems!=="object")state.shopItems={};
 
@@ -1449,23 +1461,34 @@ function getPetDisplayName(petId){
   if(!pet)return "";
   return String(state.petCustomNames?.[petId]||pet.name);
 }
+function grantNewPetRenameChance(petId){
+  if(!petId)return;
+  if(!state.petRenameUsed)state.petRenameUsed={};
+  delete state.petRenameUsed[petId];
+}
 function renamePet(petId){
-  const pet=PETS.find(p=>p.id===petId);
-  if(!pet)return;
+  const pet=PETS.find(p=>p.id===petId);if(!pet)return;
+  if(!Array.isArray(state.ownedPets)||!state.ownedPets.includes(petId)){alert("⚠️ 這隻寵物不在收藏中。");return;}
+  if(!state.petRenameUsed)state.petRenameUsed={};
+  if(state.petRenameUsed[petId]){
+    alert("🔒 這隻寵物的免費改名機會已使用。\n🐾 可購買「寵物換名卡」500 金幣再修改 1 次。");return;
+  }
   const current=getPetDisplayName(petId);
-  const value=prompt(`修改 ${pet.emoji} ${current} 的名稱：`,current);
+  const value=prompt("✏️ 修改 "+pet.emoji+" "+current+" 的名稱：\n🎁 本次兌換／購買附送 1 次免費改名",current);
   if(value===null)return;
   const name=String(value).trim().slice(0,20);
   if(!name){alert("寵物名稱不能空白。");return;}
+  if(name===current){alert("ℹ️ 名稱沒有變更，不會消耗改名機會。");return;}
   if(!state.petCustomNames)state.petCustomNames={};
   state.petCustomNames[petId]=name;
+  state.petRenameUsed[petId]=true;
   localStorage.setItem(KEY,JSON.stringify(state));
   try{updateHUD();}catch(e){}
   try{renderCharacter();}catch(e){}
   try{renderEquipment();}catch(e){}
   try{renderRanking();}catch(e){}
   try{renderPK();}catch(e){}
-  alert(`✅ ${pet.emoji} 寵物名稱已修改為：${name}`);
+  alert("✅ "+pet.emoji+" 已改名為「"+name+"」\n🔒 本隻寵物改名 1/1 已使用。");
 }
 function renderPetRenameList(){
   const host=document.getElementById("petRenameList");
@@ -1513,6 +1536,27 @@ function renderCharacter(){
   renderPetRenameList();
 }
 const RANDOM_PET_EGG={id:"random_pet_egg",emoji:"🥚",name:"隨機寵物蛋",cost:100};
+const RANDOM_EGG_COLORS=[
+ {name:"紅寶石蛋",bg:"linear-gradient(135deg,#fee2e2,#ef4444,#991b1b)",accent:"#991b1b"},
+ {name:"晴空藍蛋",bg:"linear-gradient(135deg,#dbeafe,#60a5fa,#1d4ed8)",accent:"#1d4ed8"},
+ {name:"翡翠綠蛋",bg:"linear-gradient(135deg,#dcfce7,#4ade80,#15803d)",accent:"#15803d"},
+ {name:"星光紫蛋",bg:"linear-gradient(135deg,#f3e8ff,#c084fc,#7e22ce)",accent:"#7e22ce"},
+ {name:"陽光金蛋",bg:"linear-gradient(135deg,#fef3c7,#fbbf24,#b45309)",accent:"#a16207"},
+ {name:"冰晶粉蛋",bg:"linear-gradient(135deg,#fce7f3,#f9a8d4,#be185d)",accent:"#be185d"}
+];
+function renderRandomPetEggCard(){
+  const host=document.getElementById("randomPetEggCard");if(!host)return;
+  const egg=RANDOM_EGG_COLORS[Math.floor(Math.random()*RANDOM_EGG_COLORS.length)];
+  host.style.border="2px solid "+egg.accent;host.style.background=egg.bg;
+  host.innerHTML='<div style="text-align:center;padding:12px">'+
+    '<div style="font-size:64px;filter:drop-shadow(0 5px 8px rgba(0,0,0,.22))">🥚</div>'+
+    '<b style="font-size:18px;color:'+egg.accent+'">'+esc(egg.name)+'</b>'+
+    '<div style="font-weight:1000;margin-top:5px">🥚 隨機寵物蛋</div>'+
+    '<div class="muted">100 金幣 · 隨機取得一隻寵物</div>'+
+    '<button class="primary" type="button" onclick="buyRandomPetEgg()">🪙 100 金幣開蛋</button>'+
+    '</div>';
+}
+
 
 function buyRandomPetEgg(){
   const cost=RANDOM_PET_EGG.cost;
@@ -1535,6 +1579,7 @@ function buyRandomPetEgg(){
   state.petLevels[pet.id]=Number(state.petLevels[pet.id]||1);
   state.petExp[pet.id]=Number(state.petExp[pet.id]||0);
   state.currentPet=pet.id;
+  grantNewPetRenameChance(pet.id);
 
   localStorage.setItem(KEY,JSON.stringify(state));
   try{updateHUD();}catch(e){}
@@ -1542,6 +1587,8 @@ function buyRandomPetEgg(){
   try{renderEquipment();}catch(e){}
   try{renderRanking();}catch(e){}
   alert(`🥚 開蛋成功！抽到 ${pet.emoji} ${pet.name}！`);
+
+  try{renderRandomPetEggCard();}catch(e){}
 }
 function buyPet(id){
   const p=PETS.find(x=>x.id===id);
@@ -1552,6 +1599,7 @@ function buyPet(id){
   state.coins-=p.cost;
   state.ownedPets.push(id);
   state.currentPet=id;
+  grantNewPetRenameChance(id);
   save();
   renderCharacter();
   alert(`🎉 成功兌換 ${p.emoji} ${p.name}！`);
@@ -1691,9 +1739,10 @@ function updateBossBars(){
 }
 function bossReset(){const r=reg(state.level);window.bossBattle={region:r.id,playerHp:100,bossHp:100,bossMax:100,active:false};renderBoss()}
 function closeBossWin(){const w=document.getElementById("bossWin");if(w)w.classList.remove("show");renderBoss()}
+const PET_BASE_HP={fox:500,cat:1000,dog:1880,owl:3000,dragon:5000,phoenix:8000,azure_dragon:10000,white_tiger:15000,black_tortoise:12000};
 function getPetMaxHP(petId){
   const lv=Math.max(1,Number(state.petLevels?.[petId]||1));
-  return 100+(lv-1)*10;
+  return (PET_BASE_HP[petId]??100)+(lv-1)*10;
 }
 function applyPetLevelHPToPK(petId,levelsGained){
   const b=window.pkBattle;
@@ -1704,22 +1753,32 @@ function applyPetLevelHPToPK(petId,levelsGained){
   if(typeof renderPK==="function")renderPK();
 }
 function buyShopItem(id){
-  const item=SHOP_ITEMS.find(x=>x.id===id);
-  if(!item)return;
-  if(!state.currentPet){alert("🐾 請先選擇寵物");return}
-  if((state.coins||0)<item.cost){alert("🪙 金幣不足");return}
+  const item=SHOP_ITEMS.find(x=>x.id===id);if(!item)return;
+  const playerCard=id==="player_rename_card",petCard=id==="pet_rename_card";
+  if(!state.currentPet&&!playerCard){alert("🐾 請先選擇寵物");return;}
+  if(petCard&&!state.currentPet){alert("🐾 請先選擇要使用換名卡的寵物");return;}
+  if((state.coins||0)<item.cost){alert("🪙 金幣不足");return;}
+
   state.coins-=item.cost;
-  const pid=state.currentPet;
+  if(!state.shopItems)state.shopItems={};
   state.shopItems[id]=(state.shopItems[id]||0)+1;
+  const pid=state.currentPet;
+
   if(id==="pet_food")state.petExp[pid]=(state.petExp[pid]||0)+10;
   if(id==="pet_snack")state.petExp[pid]=(state.petExp[pid]||0)+25;
   if(id==="pet_orb"){state.petLevels[pid]=(state.petLevels[pid]||1)+1;applyPetLevelHPToPK(pid,1);}
   if(id==="pet_badge"){state.petLevels[pid]=(state.petLevels[pid]||1)+2;applyPetLevelHPToPK(pid,2);}
   if(id==="pet_crown"){state.petLevels[pid]=(state.petLevels[pid]||1)+5;applyPetLevelHPToPK(pid,5);}
+
+  if(playerCard)state.playerNameChangeUsed=false;
+  if(petCard){if(!state.petRenameUsed)state.petRenameUsed={};delete state.petRenameUsed[pid];}
+
   save();
-  renderEquipment();
-  renderCharacter();
-  alert(`🎉 購買 ${item.emoji} ${item.name} 成功！`);
+  try{renderCharacter();}catch(e){}
+  try{renderEquipment();}catch(e){}
+  try{renderPlayerNameUI();}catch(e){}
+  alert("🎉 購買 "+item.emoji+" "+item.name+" 成功！"+
+    (playerCard?"\n👤 玩家名稱可再次修改 1 次。":petCard?"\n🐾 目前寵物可再次改名 1 次。":""));
 }
 function renderAchievements(){const a=[[1,"🌱","第一步"],[25,"🌲","森林探索者"],[55,"🏰","城堡征服者"],[95,"🌈","彩虹大師"],[115,"🐉","龍谷勇者"],[145,"⚔️","Blend戰士"],[160,"👾","怪獸城英雄"],[172,"🌌","172組合音傳奇"]];document.getElementById("ach").innerHTML=a.map(x=>`<div class="tile ${state.done.length>=x[0]?"":"locked"}"><div class="icon">${x[1]}</div><b>${x[2]}</b><p>${state.done.length>=x[0]?"🏅 已獲得":"🔒 完成 "+x[0]+" 關"}</p></div>`).join("")}
 function renderRanking(){
@@ -2019,6 +2078,18 @@ window.addEventListener("DOMContentLoaded",()=>{
       if(preview)preview.textContent=inp.value||"玩家";
     });
   }
-});
+});function renderPlayerNameUI(){
+  const name=String(state.playerName||"玩家").trim()||"玩家";
+  const input=document.getElementById("playerNameInput");
+  if(input&&document.activeElement!==input)input.value=name;
+  ["playerNameDisplay","playerCurrentName","Hname"].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.textContent=name;
+  });
+  const status=document.getElementById("playerNameStatus");
+  if(status)status.textContent=state.playerNameChangeUsed
+    ?"🔒 玩家名稱修改已使用 1/1；請購買玩家換名卡 1000 金幣。"
+    :(name!=="玩家"?"✏️ 已設定名稱，還可修改 1 次。":"尚未設定玩家名稱。");
+}
+
 </script>
 </body></html>
