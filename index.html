@@ -135,7 +135,12 @@ border:2px solid #6366f1;box-shadow:0 18px 45px #11182733}
 }
 #playerNameInput:focus{outline:2px solid rgba(59,130,246,.35);outline-offset:2px}
 </style>
-</head>
+<style>
+.pk-pet-defeated{animation:pkPetVanish .55s ease forwards;transition:opacity .45s ease,transform .45s ease,filter .45s ease}
+@keyframes pkPetVanish{0%{opacity:1;transform:scale(1)}70%{opacity:.35;transform:scale(.8) translateY(8px)}100%{opacity:0;transform:scale(.5) translateY(20px);filter:grayscale(1)}}
+.pk-side-defeated{animation:pkSideFade .5s ease forwards}
+@keyframes pkSideFade{to{opacity:.25}}
+</style></head>
 <body>
 <div id="deviceSwitcher">
   <b>視窗模式：</b>
@@ -152,7 +157,7 @@ border:2px solid #6366f1;box-shadow:0 18px 45px #11182733}
 <div class="sub">不用死背，讓單詞自己串成故事。｜V6 金幣寵物系統版</div>
 <div class="hud">
 <div class="hudbox">👤 玩家<b id="Hname">玩家</b></div><div class="hudbox">⭐ 星星<b id="Hstars">0</b></div><div class="hudbox">✨ XP<b id="Hxp">0</b></div><div class="hudbox">🔥 Combo<b id="Hcombo">0</b></div>
-<div class="hudbox">❤️ HP<b id="Hhp">100</b></div><div class="hudbox">🪙 金幣<b id="Hcoins">0</b></div><div class="hudbox">🎯 關卡<b id="Hprogress">0/172</b></div><div class="hudbox">🐾 寵物<b id="Hpet">無</b></div>
+<div class="hudbox">❤️ HP<b id="Hhp">100</b></div><div class="hudbox">🪙 金幣<b id="Hcoins">0</b></div><div class="hudbox">🎯 關卡<b id="Hprogress">0/172</b></div><div class="hudbox">🐾 寵物<b id="Hpet"><span style="margin-left:8px">🌌 <b id="Hlegendary">未解鎖</b></span>無</b></div>
 </div>
 </header>
 
@@ -178,7 +183,7 @@ border:2px solid #6366f1;box-shadow:0 18px 45px #11182733}
 <div class="title" style="margin-top:18px">🌍 所在區域</div><div id="regionInfo"></div>
 </div></div></section>
 
-<section id="game" class="panel"><div class="card"><div class="title">🎮 挑戰模式</div><div class="muted">6題／輪。答對 +10 XP、+1⭐、+1 Combo、+10 HP；答錯 -10 HP。</div><div id="qbox" class="qbox"></div><div id="choices" class="choices"></div><div id="feedback" class="feedback"></div><button class="primary" id="nextQ">下一題</button> <button onclick="nextLevel()">➡️ 下一關</button></div></section>
+<section id="game" class="panel"><div class="card"><div class="title">🎮 挑戰模式</div><div class="muted">6題／輪。答對 +10 XP、+1⭐、+1 Combo、+10 HP；答錯 -10 HP。</div><div id="qbox" class="qbox"></div><div style="margin:8px 0;font-weight:800">🎯 挑戰題金幣：答對 +10🪙　｜　答錯 -5🪙</div><div id="choices" class="choices"></div><div id="feedback" class="feedback"></div><button class="primary" id="nextQ">下一題</button> <button onclick="nextLevel()">➡️ 下一關</button></div></section>
 
 
 
@@ -186,7 +191,13 @@ border:2px solid #6366f1;box-shadow:0 18px 45px #11182733}
 
 <section id="world" class="panel"><div class="card"><div class="title">🌍 七大世界區域</div><div id="worldGrid" class="map"></div></div></section>
 <section id="character" class="panel"><div class="card"><div class="title">🐾 金幣兌換寵物</div><div id="skills" class="grid"></div></div></section>
-<section id="equipment" class="panel"><div class="card"><div class="title">🛒 寵物升級商店</div><div id="equip" class="grid"></div></div></section>
+<section id="equipment" class="panel"><div class="card"><div class="title">🛒 寵物升級商店</div><div style="grid-column:1/-1;margin-bottom:8px;padding:10px;border-radius:12px;background:#eff6ff;font-weight:800">🐾 寵物 HP 規則：Lv.1 = 100 HP；每升 1 級，最大 HP +10。</div><div id="randomPetEggCard" class="tile" style="border:2px dashed #f59e0b">
+  <div class="icon">🥚</div>
+  <b>隨機寵物蛋</b>
+  <p class="muted">隨機抽取一隻寵物</p>
+  <p>🪙 100 金幣</p>
+  <button class="primary" type="button" onclick="buyRandomPetEgg()">🥚 購買並開蛋</button>
+</div><div style="grid-column:1/-1;margin-bottom:8px;padding:10px 12px;border-radius:12px;background:#f5f3ff;border:1px solid #ddd6fe;font-weight:900">🌌 傳說神獸／外星生物：99,999 金幣解鎖，解鎖後可自行上傳圖片。</div><div id="equip" class="grid"></div></div></section>
 <section id="boss" class="panel"><div class="card">
 <div class="title">👹 Boss 關卡｜寵物 vs 怪獸</div>
 <div class="muted">選擇目前寵物後，挑戰本區守門 Boss。戰鬥會顯示攻擊閃光、技能特效、受擊動畫與勝利畫面。</div>
@@ -215,7 +226,9 @@ border:2px solid #6366f1;box-shadow:0 18px 45px #11182733}
   </div>
   <div id="pkOnlineStatus" class="pk-status">🟡 尚未連線</div>
 </div>
-<div id="pkPanel"></div>
+<div id="pkPanel"><div style="margin:8px 0;padding:10px 12px;border-radius:12px;background:#fff1f2;color:#991b1b;font-weight:800">
+        💀 寵物 HP 歸零：戰場消失＋永久從收藏刪除。需要重新購買或抽取新的寵物。
+      </div></div>
 </div></section>
 <section id="ranking" class="panel"><div class="card">
 <div class="title">📊 排行榜</div>
@@ -239,7 +252,7 @@ border:2px solid #6366f1;box-shadow:0 18px 45px #11182733}
 </div></section>
 <section id="player" class="panel"><div class="card"><div class="title">👤 玩家設定</div><p class="muted">首次使用可在這裡設定玩家名稱，不會再跳出阻擋遊戲的視窗。</p>
 <p>目前玩家名稱：<b id="playerCurrentName">玩家</b></p>
-<div style="display:flex;gap:8px;flex-wrap:wrap"><input id="playerNameInput" autocomplete="off" autocapitalize="words" maxlength="20" placeholder="輸入玩家名稱" style="flex:1;min-width:220px;padding:11px 13px;border:1px solid var(--line);border-radius:12px;font:inherit">
+<div style="display:flex;gap:8px;flex-wrap:wrap"><input id="playerNameInput" autocomplete="off" autocapitalize="words" maxlength="20" placeholder="輸入玩家名稱" style="flex:1;min-width:220px;padding:11px 13px;border:1px solid var(--line);border-radius:12px;font:inherit"><div id="playerNameStatus" style="display:none;margin-top:8px;font-weight:800"></div>
 <button class="primary" onclick="savePlayerName()">💾 儲存名稱</button></div>
 <p class="muted">玩家名稱會保存在本機存檔中。</p></div></section>
 <section id="save" class="panel"><div class="card"><div class="title">💾 存檔管理</div>
@@ -248,7 +261,11 @@ border:2px solid #6366f1;box-shadow:0 18px 45px #11182733}
 <button class="primary" onclick="setPlayerName()">💾 儲存玩家名稱</button>
 <button onclick="changePlayerName()">✏️ 修改名稱</button>
 </div>
-<p id="saveInfo"></p><button onclick="exportSave()">📤 匯出</button> <button class="danger" onclick="resetSave()">🧹 重置</button></div></section>
+<div id="comboRedeemBox" style="margin:12px 0;padding:12px;border-radius:14px;background:#fff7ed;border:1px solid #fed7aa">
+<div style="font-weight:900;font-size:17px">🔥 Combo 1000 兌換</div>
+<div id="comboRedeemInfo" style="margin:5px 0">目前 Combo：0/1000</div>
+<button class="primary" type="button" onclick="redeemCombo1000()" style="min-height:44px;touch-action:manipulation">🪙 兌換 1000 金幣</button>
+</div><p id="saveInfo"></p><button onclick="exportSave()">📤 匯出</button> <button class="danger" onclick="resetSave()">🧹 重置</button></div></section>
 
 <div style="text-align:center;color:#667085;padding:18px">V6 真正可玩最終版 · 001–172 · 所有主要遊戲選項均保留</div>
 </div></div>
@@ -264,25 +281,28 @@ const REGIONS=[
 {id:6,name:"👾 Digraph怪獸城",start:146,end:160,desc:"子音組合挑戰"},
 {id:7,name:"🚀 特殊音宇宙",start:161,end:172,desc:"終極特殊音試煉"}];
 const PETS=[
-  {id:"fox",emoji:"🦊",name:"火焰狐狸",cost:50,desc:"活潑敏捷的森林伙伴"},
-  {id:"cat",emoji:"🐱",name:"星星貓咪",cost:100,desc:"喜歡陪你一起學單字"},
-  {id:"dog",emoji:"🐶",name:"勇氣小狗",cost:180,desc:"戰鬥與挑戰時充滿活力"},
-  {id:"owl",emoji:"🦉",name:"智慧貓頭鷹",cost:300,desc:"專注於發音與記憶"},
-  {id:"dragon",emoji:"🐲",name:"音龍寶寶",cost:500,desc:"稀有的終極語音伙伴"},
-  {id:"phoenix",emoji:"🔥",name:"重生鳳凰",cost:800,desc:"傳說級收藏寵物"}
+{id:"fox",emoji:"🦊",name:"火焰狐狸",cost:500},
+{id:"cat",emoji:"🐱",name:"星星貓咪",cost:1000},
+{id:"dog",emoji:"🐶",name:"勇氣小狗",cost:1880},
+{id:"owl",emoji:"🦉",name:"智慧貓頭鷹",cost:3000},
+{id:"dragon",emoji:"🐲",name:"音龍寶寶",cost:5000},
+{id:"phoenix",emoji:"🔥",name:"鳳凰",cost:8000},
+{id:"azure_dragon",emoji:"🐉",name:"青龍",cost:10000},
+{id:"white_tiger",emoji:"🐯",name:"白虎",cost:15000},
+{id:"black_tortoise",emoji:"🐢",name:"玄武",cost:12000}
 ];
 const SHOP_ITEMS=[
   {id:"pet_food",emoji:"🍖",name:"活力寵物糧",cost:30,desc:"寵物經驗值 +10",effect:"+10 Pet EXP"},
   {id:"pet_snack",emoji:"🍪",name:"星星零食",cost:60,desc:"寵物經驗值 +25",effect:"+25 Pet EXP"},
-  {id:"pet_orb",emoji:"🔮",name:"寵物能量球",cost:120,desc:"寵物等級 +1",effect:"+1 Pet Level"},
-  {id:"pet_badge",emoji:"🏅",name:"成長徽章",cost:250,desc:"寵物等級 +2",effect:"+2 Pet Levels"},
-  {id:"pet_crown",emoji:"👑",name:"寵物王冠",cost:500,desc:"寵物等級 +5",effect:"+5 Pet Levels"}
+  {id:"pet_orb",emoji:"🔮",name:"寵物能量球",cost:120,desc:"寵物等級 +1",effect:"+1 Pet Level · +10 HP"},
+  {id:"pet_badge",emoji:"🏅",name:"成長徽章",cost:250,desc:"寵物等級 +2",effect:"+2 Pet Levels · +20 HP"},
+  {id:"pet_crown",emoji:"👑",name:"寵物王冠",cost:500,desc:"寵物等級 +5",effect:"+5 Pet Levels · +50 HP"}
 ];
 const BOSS_SKILLS=["🔊 音爆","🧩 音節鎖","🔥 重音焰","📖 故事幻境","⚡ Combo反擊","🛡️ 守護護盾","🌌 終極共鳴"];
 const KEY="phonics172_v6_real_playable";
 let state=loadState(), quiz={items:[],i:0,answered:false}, battle={};
 
-function baseState(){return{xP:0,xp:0,stars:0,combo:0,hp:100,level:1,done:[],bossDone:[],coins:0,gem:0,playerName:"玩家",ownedPets:[],currentPet:null,petLevels:{},petExp:{},shopItems:{},pkWins:0,pkLosses:0,pkBattles:0,items:{hint:3,potion:2}}}
+function baseState(){return{xP:0,xp:0,stars:0,combo:0,hp:100,level:1,done:[],bossDone:[],coins:0,gem:0,playerName:"玩家",ownedPets:[],currentPet:null,petLevels:{},petExp:{},petCustomNames:{},shopItems:{},legendaryBeastUnlocked:false,legendaryBeastImage:"",legendaryBeastName:"傳說神獸",pkWins:0,pkLosses:0,pkBattles:0,items:{hint:3,potion:2}}}
 function loadState(){try{const s=JSON.parse(localStorage.getItem(KEY));return Object.assign(baseState(),s||{})}catch(e){return baseState()}}
 function save(){localStorage.setItem(KEY,JSON.stringify(state));updateHUD();renderAll()}
 
@@ -411,7 +431,11 @@ function normalize(){
   if(!state.petLevels||typeof state.petLevels!=="object")state.petLevels={};
   if(!state.petExp||typeof state.petExp!=="object")state.petExp={};
   if(!state.shopItems||typeof state.shopItems!=="object")state.shopItems={};
-}
+
+  if(typeof state.legendaryBeastUnlocked!=="boolean")state.legendaryBeastUnlocked=false;
+  if(typeof state.legendaryBeastImage!=="string")state.legendaryBeastImage="";
+  if(typeof state.legendaryBeastName!=="string")state.legendaryBeastName="傳說神獸";
+if(!state.petCustomNames||typeof state.petCustomNames!=="object")state.petCustomNames={};}
 function get(n){return DATA.find(d=>d.id===Number(n))||DATA[0]}
 function reg(n){return REGIONS.find(r=>n>=r.start&&n<=r.end)||REGIONS[0]}
 function unlocked(n){return n===1||state.done.includes(n-1)}
@@ -443,6 +467,16 @@ function updateHUD(){
   }catch(e){
     console.warn("updateHUD skipped:",e);
   }
+const comboInfo=document.getElementById("comboRedeemInfo");
+  if(comboInfo){
+    const c=Math.max(0,Number(state.combo)||0);
+    comboInfo.textContent=c>=1000
+      ? `🔥 Combo ${c}/1000：可以兌換 1000🪙 金幣`
+      : `🔥 Combo ${c}/1000：還需要 ${1000-c} Combo`;
+  }
+
+  const legendary=document.getElementById("Hlegendary");
+  if(legendary)legendary.textContent=state.legendaryBeastUnlocked?(state.legendaryBeastName||"傳說神獸"):"未解鎖";
 }
 function speakText(text,lang='en-US',rate=.86){
   if(!('speechSynthesis' in window) || !text) return false;
@@ -496,26 +530,34 @@ function renderQuestion(){const q=quiz.items[quiz.i];if(!q){buildQuiz();return}q
 function answer(choice){
   if(quiz.answered)return;
   quiz.answered=true;
-  const q=quiz.items[quiz.i],fb=document.getElementById("feedback");
-  const oldHp=Number(state.hp)||100;
+
+  const q=quiz.items[quiz.i];
+  const fb=document.getElementById("feedback");
+  const oldHp=Math.max(0,Number(state.hp)||0);
+  const oldCoins=Math.max(0,Number(state.coins)||0);
+
   if(choice===q.answer){
     state.combo++;
     state.xp+=10;
     state.stars++;
+    state.coins=oldCoins+10;
     state.hp=Math.min(10000,oldHp+10);
+
     if(state.combo%5===0)state.stars++;
     if(state.combo%10===0)state.xp+=10;
+
     fb.className="feedback good";
-    fb.textContent=`✅ Correct! +10 XP +1⭐ +10 HP (${state.hp}/100)`;
+    fb.textContent=`✅ Correct! +10 XP +1⭐ +10 HP +10🪙（金幣 ${state.coins}）`;
   }else{
     state.combo=0;
     state.hp=Math.max(0,oldHp-10);
+    state.coins=Math.max(0,oldCoins-5);
+
     fb.className="feedback bad";
-    fb.textContent=`❌ Correct answer: ${q.answer} · -10 HP (${state.hp}/100)`;
-    if(state.hp===0){
-      fb.textContent+=` · 💔 HP reaches 0`;
-    }
+    fb.textContent=`❌ Correct answer: ${q.answer} · -10 HP · -5🪙（金幣 ${state.coins}）`;
+    if(state.hp===0)fb.textContent+=` · 💔 HP reaches 0`;
   }
+
   save();
 }
 document.getElementById("nextQ").onclick=()=>{if(!quiz.answered){document.getElementById("feedback").textContent="請先回答";return}quiz.i++;if(quiz.i>=quiz.items.length){completeLevel(state.level);document.getElementById("qbox").innerHTML="<b>🎉 本輪完成！</b><br>下一關已解鎖。";document.getElementById("choices").innerHTML="";document.getElementById("feedback").innerHTML=`✅ 本關完成！<button class="primary small" onclick="nextLevel()">➡️ 前往下一關</button>`;quiz.items=[]}else renderQuestion()}
@@ -786,7 +828,7 @@ const PK_OPPONENTS=[
 function pkPetData(){
   if(!state.currentPet)return null;
   const p=PETS.find(x=>x.id===state.currentPet);if(!p)return null;
-  return {id:p.id,name:p.name,emoji:p.emoji,level:Number(state.petLevels?.[p.id]||1),exp:Number(state.petExp?.[p.id]||0)};
+  return {id:p.id,name:getPetDisplayName(p.id),emoji:p.emoji,level:Number(state.petLevels?.[p.id]||1),exp:Number(state.petExp?.[p.id]||0)};
 }
 function pkOnlineStatus(text, ok=false){
   const el=document.getElementById("pkOnlineStatus");
@@ -864,7 +906,7 @@ function pkSetupConn(conn,isCaller=false){
 function pkStartOnlineBattleAsCaller(){
   const me=pkPetData();if(!me||!window.pkConn)return;
   if(window.pkBattle?.online)return;
-  window.pkBattle={online:true,onlineRole:"caller",opponent:"對方玩家",my:me,op:{id:"",name:"等待寵物",emoji:"❔",level:1,exp:0},myHp:100,opHp:100,active:true,turn:"player",log:[`🌐 ${me.name} 等待對方寵物資料…`],quiz:makePKPhonicsQuestion(),busy:false};
+  window.pkBattle={online:true,onlineRole:"caller",opponent:"對方玩家",my:me,op:{id:"",name:"等待寵物",emoji:"❔",level:1,exp:0},myMaxHp:getPetMaxHP(me.id),myHp:getPetMaxHP(me.id),opMaxHp:100,opHp:100,active:true,turn:"player",log:[`🌐 ${me.name} 等待對方寵物資料…`],quiz:makePKPhonicsQuestion(),busy:false};
   window.pkConn.send({type:"start_request",profile:pkLocalProfile(),quiz:window.pkBattle.quiz});
   renderPK();
 }
@@ -880,7 +922,7 @@ function pkHandleNet(msg){
   if(msg.type==="start_request"){
     window.pkRemoteProfile=msg.profile;
     const me=pkPetData(); if(!me)return;
-    window.pkBattle={online:true,onlineRole:"receiver",opponent:msg.profile.playerName||"玩家",my:me,op:msg.profile.pet||{name:"對方寵物",emoji:"🐾",level:1},myHp:100,opHp:100,active:true,turn:"player",log:[`🌐 ${me.name} VS ${msg.profile.pet?.name||"對方寵物"}`],quiz:makePKPhonicsQuestion(),busy:false};
+    window.pkBattle={online:true,onlineRole:"receiver",opponent:msg.profile.playerName||"玩家",my:me,op:msg.profile.pet||{name:"對方寵物",emoji:"🐾",level:1},myMaxHp:getPetMaxHP(me.id),myHp:getPetMaxHP(me.id),opMaxHp:100,opHp:100,active:true,turn:"player",log:[`🌐 ${me.name} VS ${msg.profile.pet?.name||"對方寵物"}`],quiz:makePKPhonicsQuestion(),busy:false};
     if(window.pkConn)window.pkConn.send({type:"accept_start",profile:pkLocalProfile(),quiz:window.pkBattle.quiz});
     pkOnlineStatus("真人 PK 已開始！",true);renderPK();
     return;
@@ -903,7 +945,7 @@ function pkHandleNet(msg){
     b.opHp=Math.max(0,b.opHp-Number(msg.damage||0));
     b.log.unshift(`💥 ${msg.from||"對手"} 的 ${msg.pet||"寵物"} 攻擊 -${Number(msg.damage||0)} HP！`);
     showPkFx("💥","pk-right");
-    if(b.opHp<=0){pkWin();return}
+    if(b.opHp<=0){b.opHp=0;hidePKFighter("opponent");pkWin();return}
     b.quiz=makePKPhonicsQuestion();b.busy=false;save();renderPK();
     return;
   }
@@ -927,7 +969,7 @@ function pkNewMatch(){
     opponent:opp.name,
     my:me,
     op:{id:opPet.id,name:opPet.name,emoji:opPet.emoji,level:lv,exp:lv*20},
-    myHp:100,opHp:100,active:true,turn:"player",
+    myMaxHp:getPetMaxHP(me.id),myHp:getPetMaxHP(me.id),opMaxHp:100,opHp:100,active:true,turn:"player",
     log:[`⚔️ ${me.name} VS ${opPet.name} · 對手：${opp.name}`],quiz:makePKPhonicsQuestion(),busy:false
   };
   renderPK();
@@ -1032,6 +1074,17 @@ function updatePKHpDisplay(){
   if(myBar)myBar.style.width=Math.max(0,Math.min(100,Number(b.myHp||0)))+"%";
   if(opBar)opBar.style.width=Math.max(0,Math.min(100,Number(b.opHp||0)))+"%";
 }
+function refreshPKPetHP(){
+  const b=window.pkBattle;
+  if(!b)return;
+  const max=getPetMaxHP(b.my?.id||state.currentPet);
+  b.myMaxHp=max;
+  if(Number(b.myHp||0)>max)b.myHp=max;
+  const txt=document.getElementById("pkMyHpText");
+  if(txt)txt.textContent=`${Math.max(0,Number(b.myHp||0))}/${max}`;
+  const bar=document.getElementById("pkMyHp");
+  if(bar)bar.style.width=Math.max(0,Math.min(100,(Number(b.myHp||0)/max)*100))+"%";
+}
 function pkAnswer(index){
   const b=window.pkBattle;
   if(!b || !b.active || b.busy) return;
@@ -1057,7 +1110,7 @@ function pkAnswer(index){
     b.log.unshift(`✅ 答對！${q.letter} → ${selected.word}；${b.my.name} 攻擊 ${dmg} HP！`);
 
     try{ showPkFx("💥","pk-right"); }catch(e){}
-    renderPK(); updatePKHpDisplay();
+    renderPK(); refreshPKPetHP(); updatePKHpDisplay();
 
     // 真人 PK：同步通知對手。
     if(b.online && window.pkConn){
@@ -1074,6 +1127,8 @@ function pkAnswer(index){
     save();
 
     if(b.opHp<=0){
+      b.opHp=0;
+      hidePKFighter("opponent");
       b.busy=false;
       pkWin();
       return;
@@ -1095,7 +1150,7 @@ function pkAnswer(index){
   try{ showPkFx("💢","pk-left"); }catch(e){}
 
   // 立即更新 PK 畫面，確保手機上血條與 HP 數字都減少。
-  renderPK(); updatePKHpDisplay();
+  renderPK(); refreshPKPetHP(); updatePKHpDisplay();
   save();
 
   // 真人 PK：通知對手我方答錯造成的自傷。
@@ -1111,6 +1166,8 @@ function pkAnswer(index){
   }
 
   if(b.myHp<=0){
+      b.myHp=0;
+      hidePKFighter("me");
     b.busy=false;
     pkLose();
     return;
@@ -1147,7 +1204,7 @@ function enemyPkTurn(){
     b.myHp=Math.max(0,b.myHp-dmg);b.guarding=false;
     b.log.unshift(`👾 ${b.op.name} 反擊！-${dmg} HP`);
     showPkFx("⚡","pk-left");
-    if(b.myHp<=0){pkLose();return}
+    if(b.myHp<=0){b.myHp=0;hidePKFighter("me");pkLose();return}
     save();renderPK();
   },450);
 }
@@ -1174,6 +1231,45 @@ function showPkFx(symbol,target){
     }
   }catch(err){}
 }
+function permanentlyDeletePKPet(){
+  const b=window.pkBattle;
+  if(!b||!b.my)return null;
+
+  const petId=b.my.id;
+  const pet=PETS.find(p=>p.id===petId);
+  if(!petId||!pet)return pet;
+
+  // 從收藏永久移除
+  if(Array.isArray(state.ownedPets)){
+    state.ownedPets=state.ownedPets.filter(id=>id!==petId);
+  }
+
+  // 移除自訂名稱、等級、EXP，避免「刪除後又復原」
+  if(state.petCustomNames)delete state.petCustomNames[petId];
+  if(state.petLevels)delete state.petLevels[petId];
+  if(state.petExp)delete state.petExp[petId];
+
+  // 如果目前使用的就是這隻，清空目前寵物
+  if(state.currentPet===petId)state.currentPet=null;
+
+  localStorage.setItem(KEY,JSON.stringify(state));
+  try{updateHUD();}catch(e){}
+  try{renderCharacter();}catch(e){}
+  try{renderEquipment();}catch(e){}
+  try{renderRanking();}catch(e){}
+
+  return pet;
+}
+function hidePKFighter(side){
+  const selectors=side==="me"
+    ?[".pk-left .pet-avatar",".pk-left .pk-pet",".pk-left .fighter-avatar"]
+    :[".pk-right .pet-avatar",".pk-right .pk-pet",".pk-right .fighter-avatar"];
+  selectors.forEach(sel=>document.querySelectorAll(sel).forEach(el=>{
+    el.classList.add("pk-pet-defeated");
+  }));
+  const sideEl=document.querySelector(side==="me"?".pk-left":".pk-right");
+  if(sideEl)sideEl.classList.add("pk-side-defeated");
+}
 function pkWin(){
   const b=window.pkBattle;b.active=false;
   state.pkWins=(state.pkWins||0)+1;state.pkBattles=(state.pkBattles||0)+1;
@@ -1191,10 +1287,203 @@ function pkLose(){
   const t=document.getElementById("pkWinTitle"),p=document.getElementById("pkWinText");
   if(t)t.textContent="💫 PK DEFEAT";
   if(p)p.textContent=`${b.my.name} 被 ${b.op.name} 擊敗，再試一次！`;
+
+  try{
+    const name=window.pkBattle?.defeatedPetName||"你的寵物";
+    const log=document.getElementById("pkLog");
+    if(log)log.innerHTML=`💨 <b>${esc(name)}</b> HP 歸零！<br>🗑️ 這隻寵物已永久從收藏中刪除。<br>🛒 請重新購買或抽取新的寵物。`;
+  }catch(e){}
+
 }
 function pkClose(){window.pkBattle=null;renderPK()}
 function renderWorld(){document.getElementById("worldGrid").innerHTML=REGIONS.map(r=>{const done=state.done.filter(n=>n>=r.start&&n<=r.end).length,total=r.end-r.start+1,p=Math.round(done/total*100);let nums="";for(let n=r.start;n<=r.end;n++)nums+=`<span class="lvl ${state.done.includes(n)?"done ":""}${n===state.level?"now ":""}${unlocked(n)?"":"lock"}">${n}</span>`;return `<div class="region"><h3>${r.name}</h3><div class="muted">${r.desc}</div><p>${done}/${total} · ${p}%</p><div class="bar"><i style="width:${p}%"></i></div><div class="mini">${nums}</div><button onclick="go(${r.start})">進入</button></div>`}).join("")}
 function go(n){if(!unlocked(n)&&!state.done.includes(n)){alert("🔒 尚未解鎖");return}state.level=n;save();populateLevels();renderLearn();showTab("learn")}
+
+const LEGENDARY_BEAST_COST=99999;
+
+function unlockLegendaryBeast(){
+  if(state.legendaryBeastUnlocked){
+    alert("🌌 傳說神獸／外星生物已解鎖！");
+    return;
+  }
+
+  const coins=Math.max(0,Number(state.coins)||0);
+  if(coins<LEGENDARY_BEAST_COST){
+    alert(`🪙 金幣不足！需要 ${LEGENDARY_BEAST_COST.toLocaleString()} 金幣。`);
+    return;
+  }
+
+  state.coins=coins-LEGENDARY_BEAST_COST;
+  state.legendaryBeastUnlocked=true;
+  state.legendaryBeastName="傳說神獸";
+
+  localStorage.setItem(KEY,JSON.stringify(state));
+  try{updateHUD();}catch(e){}
+  try{renderCharacter();}catch(e){}
+  try{renderEquipment();}catch(e){}
+  try{renderRanking();}catch(e){}
+
+  alert("🌌 解鎖成功！現在可以自行上傳傳說神獸／外星生物圖片。");
+}
+
+function handleLegendaryBeastImage(file){
+  if(!state.legendaryBeastUnlocked){
+    alert("🔒 請先使用 99,999 金幣解鎖傳說神獸／外星生物。");
+    return;
+  }
+  if(!file)return;
+
+  const allowed=["image/png","image/jpeg","image/webp","image/gif"];
+  if(!allowed.includes(file.type)){
+    alert("請上傳 PNG、JPG、WEBP 或 GIF 圖片。");
+    return;
+  }
+
+  if(file.size>8*1024*1024){
+    alert("圖片請控制在 8MB 以下。");
+    return;
+  }
+
+  const reader=new FileReader();
+  reader.onload=()=>{
+    const img=new Image();
+    img.onload=()=>{
+      const max=800;
+      const scale=Math.min(1,max/img.width,max/img.height);
+      const canvas=document.createElement("canvas");
+      canvas.width=Math.max(1,Math.round(img.width*scale));
+      canvas.height=Math.max(1,Math.round(img.height*scale));
+
+      const ctx=canvas.getContext("2d");
+      if(!ctx){
+        alert("圖片處理失敗，請重新選擇圖片。");
+        return;
+      }
+
+      ctx.drawImage(img,0,0,canvas.width,canvas.height);
+      const dataUrl=canvas.toDataURL("image/jpeg",0.82);
+
+      state.legendaryBeastImage=dataUrl;
+      localStorage.setItem(KEY,JSON.stringify(state));
+
+      try{updateHUD();}catch(e){}
+      try{renderCharacter();}catch(e){}
+      try{renderEquipment();}catch(e){}
+
+      alert("✅ 傳說神獸圖片已儲存！");
+    };
+    img.onerror=()=>alert("圖片讀取失敗，請重新選擇圖片。");
+    img.src=String(reader.result||"");
+  };
+  reader.readAsDataURL(file);
+}
+
+function renameLegendaryBeast(){
+  if(!state.legendaryBeastUnlocked)return;
+
+  const value=prompt(
+    "輸入你的傳說神獸／外星生物名稱：",
+    state.legendaryBeastName||"傳說神獸"
+  );
+  if(value===null)return;
+
+  const name=String(value).trim().slice(0,20);
+  if(!name){
+    alert("名稱不能空白。");
+    return;
+  }
+
+  state.legendaryBeastName=name;
+  localStorage.setItem(KEY,JSON.stringify(state));
+
+  try{renderCharacter();}catch(e){}
+  try{renderEquipment();}catch(e){}
+}
+
+function appendLegendaryBeastCard(targetId){
+  const target=document.getElementById(targetId);
+  if(!target || document.getElementById("legendaryBeastCard_"+targetId))return;
+
+  const card=document.createElement("div");
+  card.id="legendaryBeastCard_"+targetId;
+  card.className="tile";
+  card.style.border="2px solid #7c3aed";
+  card.style.background="linear-gradient(135deg,#faf5ff,#eef2ff)";
+
+  const unlocked=!!state.legendaryBeastUnlocked;
+  const img=state.legendaryBeastImage||"";
+  const name=esc(state.legendaryBeastName||"傳說神獸");
+
+  if(unlocked){
+    card.innerHTML =
+      '<div class="icon" style="font-size:48px">🌌</div>'+
+      '<b>傳說神獸／外星生物</b>'+
+      '<p class="muted">🪙 已解鎖 · 可自行上傳圖片</p>'+
+      (img
+        ? '<img src="'+img+'" alt="傳說神獸" style="width:100%;max-width:200px;aspect-ratio:1/1;object-fit:cover;border-radius:16px;display:block;margin:8px auto">'
+        : '<div style="padding:20px;border-radius:14px;background:#f5f3ff;margin:8px 0;text-align:center">🌌 尚未上傳圖片</div>')+
+      '<div style="font-weight:900;margin:8px 0">'+name+'</div>'+
+      '<input id="legendaryBeastFile_'+targetId+'" type="file" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none">'+
+      '<div style="display:flex;gap:6px;flex-wrap:wrap">'+
+      '<button class="primary" type="button" onclick="document.getElementById(&quot;legendaryBeastFile_'+targetId+'&quot;).click()">📷 上傳圖片</button>'+
+      '<button class="primary" type="button" onclick="renameLegendaryBeast()">✏️ 修改名稱</button>'+
+      '</div>';
+
+    setTimeout(()=>{
+      const input=document.getElementById("legendaryBeastFile_"+targetId);
+      if(input)input.onchange=()=>handleLegendaryBeastImage(input.files&&input.files[0]);
+    },0);
+  }else{
+    card.innerHTML =
+      '<div class="icon" style="font-size:48px">🌌</div>'+
+      '<b>傳說神獸／外星生物</b>'+
+      '<p class="muted">解鎖後可自行上傳專屬圖片</p>'+
+      '<p style="font-weight:900">🪙 99,999 金幣</p>'+
+      '<button class="primary" type="button" onclick="unlockLegendaryBeast()">🌌 99,999 金幣解鎖</button>';
+  }
+
+  target.appendChild(card);
+}
+function getPetDisplayName(petId){
+  const pet=PETS.find(p=>p.id===petId);
+  if(!pet)return "";
+  return String(state.petCustomNames?.[petId]||pet.name);
+}
+function renamePet(petId){
+  const pet=PETS.find(p=>p.id===petId);
+  if(!pet)return;
+  const current=getPetDisplayName(petId);
+  const value=prompt(`修改 ${pet.emoji} ${current} 的名稱：`,current);
+  if(value===null)return;
+  const name=String(value).trim().slice(0,20);
+  if(!name){alert("寵物名稱不能空白。");return;}
+  if(!state.petCustomNames)state.petCustomNames={};
+  state.petCustomNames[petId]=name;
+  localStorage.setItem(KEY,JSON.stringify(state));
+  try{updateHUD();}catch(e){}
+  try{renderCharacter();}catch(e){}
+  try{renderEquipment();}catch(e){}
+  try{renderRanking();}catch(e){}
+  try{renderPK();}catch(e){}
+  alert(`✅ ${pet.emoji} 寵物名稱已修改為：${name}`);
+}
+function renderPetRenameList(){
+  const host=document.getElementById("petRenameList");
+  if(!host)return;
+  const owned=Array.isArray(state.ownedPets)?state.ownedPets:[];
+  if(!owned.length){
+    host.innerHTML='<div class="muted">尚未擁有寵物。</div>';
+    return;
+  }
+  host.innerHTML=owned.map(id=>{
+    const p=PETS.find(x=>x.id===id);
+    if(!p)return "";
+    return `<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)">
+      <span>${p.emoji} <b>${esc(getPetDisplayName(id))}</b></span>
+      <button class="primary small" type="button" onclick="renamePet('${id}')">✏️ 修改</button>
+    </div>`;
+  }).join("");
+}
 function renderCharacter(){
   const owned=Array.isArray(state.ownedPets)?state.ownedPets:[];
   const current=state.currentPet||"";
@@ -1218,6 +1507,41 @@ function renderCharacter(){
         }
       </div>`;
     }).join("");
+
+  appendLegendaryBeastCard('skills');
+
+  renderPetRenameList();
+}
+const RANDOM_PET_EGG={id:"random_pet_egg",emoji:"🥚",name:"隨機寵物蛋",cost:100};
+
+function buyRandomPetEgg(){
+  const cost=RANDOM_PET_EGG.cost;
+  const coins=Math.max(0,Number(state.coins)||0);
+  if(coins<cost){
+    alert(`🪙 金幣不足，需要 ${cost} 金幣。`);
+    return;
+  }
+  state.coins=coins-cost;
+
+  const owned=Array.isArray(state.ownedPets)?state.ownedPets:[];
+  state.ownedPets=owned;
+  const unowned=PETS.filter(p=>!owned.includes(p.id));
+  const pool=unowned.length?unowned:PETS;
+  const pet=pool[Math.floor(Math.random()*pool.length)];
+
+  if(!state.ownedPets.includes(pet.id))state.ownedPets.push(pet.id);
+  if(!state.petLevels)state.petLevels={};
+  if(!state.petExp)state.petExp={};
+  state.petLevels[pet.id]=Number(state.petLevels[pet.id]||1);
+  state.petExp[pet.id]=Number(state.petExp[pet.id]||0);
+  state.currentPet=pet.id;
+
+  localStorage.setItem(KEY,JSON.stringify(state));
+  try{updateHUD();}catch(e){}
+  try{renderCharacter();}catch(e){}
+  try{renderEquipment();}catch(e){}
+  try{renderRanking();}catch(e){}
+  alert(`🥚 開蛋成功！抽到 ${pet.emoji} ${pet.name}！`);
 }
 function buyPet(id){
   const p=PETS.find(x=>x.id===id);
@@ -1261,6 +1585,8 @@ function renderEquipment(){
         <button class="primary" onclick="buyShopItem('${x.id}')" ${(state.coins||0)>=x.cost&&pet?"":"disabled"}>🪙 購買</button>
       </div>`;
     }).join("");
+
+  appendLegendaryBeastCard('equip');
 }
 function renderBoss(){
   const r=reg(state.level),open=state.done.includes(r.end),pet=state.currentPet?PETS.find(p=>p.id===state.currentPet):null;
@@ -1365,6 +1691,18 @@ function updateBossBars(){
 }
 function bossReset(){const r=reg(state.level);window.bossBattle={region:r.id,playerHp:100,bossHp:100,bossMax:100,active:false};renderBoss()}
 function closeBossWin(){const w=document.getElementById("bossWin");if(w)w.classList.remove("show");renderBoss()}
+function getPetMaxHP(petId){
+  const lv=Math.max(1,Number(state.petLevels?.[petId]||1));
+  return 100+(lv-1)*10;
+}
+function applyPetLevelHPToPK(petId,levelsGained){
+  const b=window.pkBattle;
+  if(!b||!b.active||!b.my||b.my.id!==petId)return;
+  const gain=Math.max(0,Number(levelsGained||0))*10;
+  b.myMaxHp=Math.max(100,Number(b.myMaxHp||100))+gain;
+  b.myHp=Math.min(b.myMaxHp,Math.max(0,Number(b.myHp||0))+gain);
+  if(typeof renderPK==="function")renderPK();
+}
 function buyShopItem(id){
   const item=SHOP_ITEMS.find(x=>x.id===id);
   if(!item)return;
@@ -1375,9 +1713,9 @@ function buyShopItem(id){
   state.shopItems[id]=(state.shopItems[id]||0)+1;
   if(id==="pet_food")state.petExp[pid]=(state.petExp[pid]||0)+10;
   if(id==="pet_snack")state.petExp[pid]=(state.petExp[pid]||0)+25;
-  if(id==="pet_orb")state.petLevels[pid]=(state.petLevels[pid]||1)+1;
-  if(id==="pet_badge")state.petLevels[pid]=(state.petLevels[pid]||1)+2;
-  if(id==="pet_crown")state.petLevels[pid]=(state.petLevels[pid]||1)+5;
+  if(id==="pet_orb"){state.petLevels[pid]=(state.petLevels[pid]||1)+1;applyPetLevelHPToPK(pid,1);}
+  if(id==="pet_badge"){state.petLevels[pid]=(state.petLevels[pid]||1)+2;applyPetLevelHPToPK(pid,2);}
+  if(id==="pet_crown"){state.petLevels[pid]=(state.petLevels[pid]||1)+5;applyPetLevelHPToPK(pid,5);}
   save();
   renderEquipment();
   renderCharacter();
@@ -1406,7 +1744,7 @@ function renderRanking(){
     if(!p)return null;
     return {
       player:player,
-      name:p.name,
+      name:getPetDisplayName(p.id),
       emoji:p.emoji,
       level:Number(state.petLevels?.[id]||1),
       exp:Number(state.petExp?.[id]||0),
@@ -1549,6 +1887,20 @@ function renderQuests(){
   if(t)t.textContent=`${n}/26`;
   if(b)b.style.width=(n/26*100)+"%";
 }
+function redeemCombo1000(){
+  const combo=Math.max(0,Number(state.combo)||0);
+  if(combo<1000){
+    alert(`🔥 Combo ${combo}/1000，還需要 ${1000-combo} Combo 才能兌換 1000🪙 金幣。`);
+    return;
+  }
+  state.combo=combo-1000;
+  state.coins=Math.max(0,Number(state.coins)||0)+1000;
+  localStorage.setItem(KEY,JSON.stringify(state));
+  try{updateHUD();}catch(e){}
+  try{renderSave();}catch(e){}
+  try{renderRanking();}catch(e){}
+  alert("🎉 兌換成功！1000 Combo → +1000🪙 金幣");
+}
 function renderSave(){
   const inp=document.getElementById("playerNameInput");
   if(inp && document.activeElement!==inp) inp.value=state.playerName||"玩家";
@@ -1572,29 +1924,34 @@ function setPlayerName(){
   if(!inp)return;
   const name=String(inp.value||"").trim().slice(0,20);
   if(!name){alert("請輸入玩家名稱");inp.focus();return;}
+
   state.playerName=name;
   localStorage.setItem(KEY,JSON.stringify(state));
-  updateHUD();
-  renderSave();
-  const input=document.getElementById("playerNameInput");
-  if(input){
-    input.value=name;
-    input.focus();
-    if(typeof input.setSelectionRange==="function"){
-      const n=input.value.length;
-      input.setSelectionRange(n,n);
-    }
+
+  const ids=["Hname","playerNameDisplay","playerCurrentName"];
+  ids.forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.textContent=name;
+  });
+
+  inp.value=name;
+
+  try{renderRanking();}catch(e){}
+  try{renderCharacter();}catch(e){}
+  try{renderPK();}catch(e){}
+  try{renderSave();}catch(e){}
+
+  const status=document.getElementById("playerNameStatus");
+  if(status){
+    status.textContent="✅ 玩家名稱已更新："+name;
+    status.style.display="block";
   }
-  alert("✅ 玩家名稱已儲存："+name);
 }
 function changePlayerName(){
   const inp=document.getElementById("playerNameInput");
   if(inp){
+    inp.value=state.playerName||"玩家";
     inp.focus();
-    if(typeof inp.setSelectionRange==="function"){
-      const n=inp.value.length;
-      inp.setSelectionRange(n,n);
-    }
     return;
   }
   const name=prompt("請輸入新的玩家名稱：",state.playerName||"玩家");
@@ -1602,8 +1959,12 @@ function changePlayerName(){
   const n=String(name).trim().slice(0,20);
   if(!n){alert("玩家名稱不能空白");return;}
   state.playerName=n;
-  save();
-  renderSave();
+  localStorage.setItem(KEY,JSON.stringify(state));
+  try{updateHUD();}catch(e){}
+  try{renderRanking();}catch(e){}
+  try{renderCharacter();}catch(e){}
+  try{renderPK();}catch(e){}
+  try{renderSave();}catch(e){}
 }
 function exportSave(){const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="172組合音故事單詞卡_V6_存檔.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),800)}
 function resetSave(){if(confirm("確定重置全部進度？")){localStorage.removeItem(KEY);state=baseState();save();populateLevels();renderLearn();showTab("learn");alert("已重新開始！")}}
@@ -1638,5 +1999,26 @@ window.addEventListener("DOMContentLoaded",()=>{
   }
 });
 
+
+function syncPlayerNameDisplay(){
+  const name=state.playerName||"玩家";
+  ["Hname","playerNameDisplay","playerCurrentName"].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.textContent=name;
+  });
+  const inp=document.getElementById("playerNameInput");
+  if(inp && document.activeElement!==inp)inp.value=name;
+}
+
+window.addEventListener("DOMContentLoaded",()=>{
+  try{syncPlayerNameDisplay();}catch(e){}
+  const inp=document.getElementById("playerNameInput");
+  if(inp){
+    inp.addEventListener("input",()=>{
+      const preview=document.getElementById("playerCurrentName");
+      if(preview)preview.textContent=inp.value||"玩家";
+    });
+  }
+});
 </script>
 </body></html>
