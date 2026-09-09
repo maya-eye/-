@@ -197,8 +197,13 @@ border:2px solid #6366f1;box-shadow:0 18px 45px #11182733}
   <p class="muted">隨機抽取一隻寵物</p>
   <p>🪙 100 金幣</p>
   <button class="primary" type="button" onclick="buyRandomPetEgg()">🥚 購買並開蛋</button>
-</div><div style="grid-column:1/-1;margin-bottom:8px;padding:10px 12px;border-radius:12px;background:#f5f3ff;border:1px solid #ddd6fe;font-weight:900">🌌 傳說神獸／外星生物：99,999 金幣解鎖，解鎖後可自行上傳圖片。</div><div id="renameCardNotice" style="grid-column:1/-1;margin:0 0 10px;padding:11px 13px;border-radius:12px;background:#f5f3ff;border:1px solid #ddd6fe;font-weight:900">
-👤 玩家換名卡：<b>1,000 金幣</b>｜🐾 寵物換名卡：<b>500 金幣</b>　（購買後各恢復 1 次名稱修改機會）
+</div><div style="grid-column:1/-1;margin-bottom:8px;padding:10px 12px;border-radius:12px;background:#f5f3ff;border:1px solid #ddd6fe;font-weight:900">🌌 傳說神獸／外星生物：99,999 金幣解鎖，解鎖後可自行上傳圖片。</div><div id="renameCardNotice" style="grid-column:1/-1;margin:0 0 12px;padding:12px;border-radius:14px;background:#f5f3ff;border:1px solid #ddd6fe">
+  <div style="font-size:18px;font-weight:1000;margin-bottom:8px">✏️ 換名卡選項</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="primary small" type="button" onclick="buyRenameCard('player')">👤 玩家換名卡｜1,000 🪙</button>
+    <button class="primary small" type="button" onclick="buyRenameCard('pet')">🐾 寵物換名卡｜500 🪙</button>
+  </div>
+  <div style="margin-top:7px;font-weight:800">購買後各恢復 <b>1 次名稱修改機會</b>。</div>
 </div><div id="equip" class="grid"></div></div></section>
 <section id="boss" class="panel"><div class="card">
 <div class="title">👹 Boss 關卡｜寵物 vs 怪獸</div>
@@ -315,7 +320,23 @@ const KEY="phonics172_v6_real_playable";
 let state=loadState(), quiz={items:[],i:0,answered:false}, battle={};
 
 function baseState(){return{xP:0,xp:0,stars:0,combo:0,hp:100,level:1,done:[],bossDone:[],coins:0,gem:0,playerName:"玩家",playerNameChangeUsed:false,ownedPets:[],currentPet:null,petLevels:{},petExp:{},petCustomNames:{},petRenameUsed:{},shopItems:{},legendaryBeastUnlocked:false,legendaryBeastImage:"",legendaryBeastName:"傳說神獸",pkWins:0,pkLosses:0,pkBattles:0,items:{hint:3,potion:2}}}
-function loadState(){try{const s=JSON.parse(localStorage.getItem(KEY));return Object.assign(baseState(),s||{})}catch(e){return baseState()}}
+function loadState(){
+  try{
+    const raw=localStorage.getItem(KEY);
+    const s=raw?JSON.parse(raw):null;
+    const st=Object.assign(baseState(),s||{});
+    if((!s || !String(st.playerName||"").trim())){
+      const fallback=localStorage.getItem("playerName")||localStorage.getItem("universePlayerName");
+      if(fallback)st.playerName=String(fallback).trim().slice(0,20)||"玩家";
+    }
+    return st;
+  }catch(e){
+    const st=baseState();
+    const fallback=localStorage.getItem("playerName")||localStorage.getItem("universePlayerName");
+    if(fallback)st.playerName=String(fallback).trim().slice(0,20)||"玩家";
+    return st;
+  }
+}
 function save(){localStorage.setItem(KEY,JSON.stringify(state));updateHUD();renderAll()}
 
 let mobileAudioUnlocked = false;
@@ -1752,33 +1773,65 @@ function applyPetLevelHPToPK(petId,levelsGained){
   b.myHp=Math.min(b.myMaxHp,Math.max(0,Number(b.myHp||0))+gain);
   if(typeof renderPK==="function")renderPK();
 }
+function buyRenameCard(type){
+  const id=type==="player"?"player_rename_card":"pet_rename_card";
+  buyShopItem(id);
+}
 function buyShopItem(id){
-  const item=SHOP_ITEMS.find(x=>x.id===id);if(!item)return;
-  const playerCard=id==="player_rename_card",petCard=id==="pet_rename_card";
-  if(!state.currentPet&&!playerCard){alert("🐾 請先選擇寵物");return;}
-  if(petCard&&!state.currentPet){alert("🐾 請先選擇要使用換名卡的寵物");return;}
-  if((state.coins||0)<item.cost){alert("🪙 金幣不足");return;}
+  const item=SHOP_ITEMS.find(x=>x.id===id);
+  if(!item)return;
+  const playerCard=id==="player_rename_card";
+  const petCard=id==="pet_rename_card";
+
+  if(!state.currentPet && !playerCard){
+    alert("🐾 請先選擇寵物");return;
+  }
+  if(petCard && !state.currentPet){
+    alert("🐾 請先選擇要使用寵物換名卡的寵物");return;
+  }
+  if((state.coins||0)<item.cost){
+    alert("🪙 金幣不足");return;
+  }
 
   state.coins-=item.cost;
   if(!state.shopItems)state.shopItems={};
   state.shopItems[id]=(state.shopItems[id]||0)+1;
-  const pid=state.currentPet;
 
+  const pid=state.currentPet;
   if(id==="pet_food")state.petExp[pid]=(state.petExp[pid]||0)+10;
   if(id==="pet_snack")state.petExp[pid]=(state.petExp[pid]||0)+25;
-  if(id==="pet_orb"){state.petLevels[pid]=(state.petLevels[pid]||1)+1;applyPetLevelHPToPK(pid,1);}
-  if(id==="pet_badge"){state.petLevels[pid]=(state.petLevels[pid]||1)+2;applyPetLevelHPToPK(pid,2);}
-  if(id==="pet_crown"){state.petLevels[pid]=(state.petLevels[pid]||1)+5;applyPetLevelHPToPK(pid,5);}
+  if(id==="pet_orb"){
+    state.petLevels[pid]=(state.petLevels[pid]||1)+1;
+    applyPetLevelHPToPK(pid,1);
+  }
+  if(id==="pet_badge"){
+    state.petLevels[pid]=(state.petLevels[pid]||1)+2;
+    applyPetLevelHPToPK(pid,2);
+  }
+  if(id==="pet_crown"){
+    state.petLevels[pid]=(state.petLevels[pid]||1)+5;
+    applyPetLevelHPToPK(pid,5);
+  }
 
-  if(playerCard)state.playerNameChangeUsed=false;
-  if(petCard){if(!state.petRenameUsed)state.petRenameUsed={};delete state.petRenameUsed[pid];}
+  if(playerCard){
+    state.playerNameChangeUsed=false;
+  }
+  if(petCard){
+    if(!state.petRenameUsed)state.petRenameUsed={};
+    delete state.petRenameUsed[pid];
+  }
 
   save();
   try{renderCharacter();}catch(e){}
   try{renderEquipment();}catch(e){}
   try{renderPlayerNameUI();}catch(e){}
-  alert("🎉 購買 "+item.emoji+" "+item.name+" 成功！"+
-    (playerCard?"\n👤 玩家名稱可再次修改 1 次。":petCard?"\n🐾 目前寵物可再次改名 1 次。":""));
+
+  const extra=playerCard
+    ?"\n👤 玩家名稱已恢復 1 次修改機會。"
+    :petCard
+    ?"\n🐾 目前寵物已恢復 1 次改名機會。"
+    :"";
+  alert("🎉 購買 "+item.emoji+" "+item.name+" 成功！"+extra);
 }
 function renderAchievements(){const a=[[1,"🌱","第一步"],[25,"🌲","森林探索者"],[55,"🏰","城堡征服者"],[95,"🌈","彩虹大師"],[115,"🐉","龍谷勇者"],[145,"⚔️","Blend戰士"],[160,"👾","怪獸城英雄"],[172,"🌌","172組合音傳奇"]];document.getElementById("ach").innerHTML=a.map(x=>`<div class="tile ${state.done.length>=x[0]?"":"locked"}"><div class="icon">${x[1]}</div><b>${x[2]}</b><p>${state.done.length>=x[0]?"🏅 已獲得":"🔒 完成 "+x[0]+" 關"}</p></div>`).join("")}
 function renderRanking(){
@@ -1978,53 +2031,106 @@ function renderSave(){
       💾 存檔：已啟用`;
   }
 }
-function setPlayerName(){
-  const inp=document.getElementById("playerNameInput");
-  if(!inp)return;
-  const name=String(inp.value||"").trim().slice(0,20);
-  if(!name){alert("請輸入玩家名稱");inp.focus();return;}
+function syncPlayerNameEverywhere(name){
+  const safeName=String(name||"玩家").trim().slice(0,20)||"玩家";
+  state.playerName=safeName;
 
-  state.playerName=name;
+  // 主遊戲存檔 + 手機/舊版本相容名稱存檔
   localStorage.setItem(KEY,JSON.stringify(state));
+  localStorage.setItem("playerName",safeName);
+  localStorage.setItem("universePlayerName",safeName);
 
   const ids=["Hname","playerNameDisplay","playerCurrentName"];
   ids.forEach(id=>{
     const el=document.getElementById(id);
-    if(el)el.textContent=name;
+    if(el)el.textContent=safeName;
   });
 
-  inp.value=name;
-
-  try{renderRanking();}catch(e){}
-  try{renderCharacter();}catch(e){}
-  try{renderPK();}catch(e){}
-  try{renderSave();}catch(e){}
-
-  const status=document.getElementById("playerNameStatus");
-  if(status){
-    status.textContent="✅ 玩家名稱已更新："+name;
-    status.style.display="block";
-  }
-}
-function changePlayerName(){
   const inp=document.getElementById("playerNameInput");
-  if(inp){
-    inp.value=state.playerName||"玩家";
-    inp.focus();
-    return;
-  }
-  const name=prompt("請輸入新的玩家名稱：",state.playerName||"玩家");
-  if(name===null)return;
-  const n=String(name).trim().slice(0,20);
-  if(!n){alert("玩家名稱不能空白");return;}
-  state.playerName=n;
-  localStorage.setItem(KEY,JSON.stringify(state));
+  if(inp)inp.value=safeName;
+
+  try{renderPlayerNameUI();}catch(e){}
   try{updateHUD();}catch(e){}
   try{renderRanking();}catch(e){}
   try{renderCharacter();}catch(e){}
   try{renderPK();}catch(e){}
   try{renderSave();}catch(e){}
 }
+
+function setPlayerName(){
+  const inp=document.getElementById("playerNameInput");
+  if(!inp)return;
+
+  const name=String(inp.value||"").trim().slice(0,20);
+  if(!name){
+    alert("請輸入玩家名稱");
+    inp.focus();
+    return;
+  }
+
+  const oldName=String(state.playerName||"玩家").trim()||"玩家";
+  syncPlayerNameEverywhere(name);
+
+  // 第一次設定/第一次修改後，立即記錄已使用 1 次免費修改機會。
+  if(!state.playerNameChangeUsed && name!==oldName){
+    state.playerNameChangeUsed=true;
+    localStorage.setItem(KEY,JSON.stringify(state));
+    localStorage.setItem("playerName",name);
+    localStorage.setItem("universePlayerName",name);
+  }
+
+  const status=document.getElementById("playerNameStatus");
+  if(status){
+    status.textContent=state.playerNameChangeUsed
+      ?"✅ 玩家名稱已儲存並同步："+name+"（已使用 1 次修改機會）"
+      :"✅ 玩家名稱已儲存並同步："+name;
+    status.style.display="block";
+  }
+
+  try{renderPlayerNameUI();}catch(e){}
+  try{updateHUD();}catch(e){}
+}
+
+function savePlayerName(){
+  // 手機版按下「儲存名稱」也走同一套同步流程。
+  setPlayerName();
+}
+
+function editPlayerName(){
+  const inp=document.getElementById("playerNameInput");
+  if(inp){
+    try{showTab("player");}catch(e){}
+    inp.value=state.playerName||"玩家";
+    setTimeout(()=>{
+      try{inp.focus();inp.select();}catch(e){}
+    },0);
+    return;
+  }
+  changePlayerName();
+}
+
+function changePlayerName(){
+  const inp=document.getElementById("playerNameInput");
+  if(inp){
+    try{showTab("player");}catch(e){}
+    inp.value=state.playerName||"玩家";
+    setTimeout(()=>{
+      try{inp.focus();inp.select();}catch(e){}
+    },0);
+    return;
+  }
+
+  const name=prompt("請輸入新的玩家名稱：",state.playerName||"玩家");
+  if(name===null)return;
+
+  const n=String(name).trim().slice(0,20);
+  if(!n){
+    alert("玩家名稱不能空白");
+    return;
+  }
+  syncPlayerNameEverywhere(n);
+}
+
 function exportSave(){const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="172組合音故事單詞卡_V6_存檔.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),800)}
 function resetSave(){if(confirm("確定重置全部進度？")){localStorage.removeItem(KEY);state=baseState();save();populateLevels();renderLearn();showTab("learn");alert("已重新開始！")}}
 function renderPlayer(){
@@ -2071,6 +2177,7 @@ function syncPlayerNameDisplay(){
 
 window.addEventListener("DOMContentLoaded",()=>{
   try{syncPlayerNameDisplay();}catch(e){}
+  try{renderPlayerNameUI();}catch(e){}
   const inp=document.getElementById("playerNameInput");
   if(inp){
     inp.addEventListener("input",()=>{
