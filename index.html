@@ -39,37 +39,50 @@ button,select{font:inherit}button{cursor:pointer;border:0;border-radius:12px;pad
 <button class="tab active" data-tab="learn">📚 學習</button><button class="tab" data-tab="game">🎮 挑戰</button>
 <button class="tab" data-tab="mind">🧠 Mind Map</button><button class="tab" data-tab="world">🌍 世界地圖</button><button class="tab" data-tab="character">🐾 寵物</button>
 <button class="tab" data-tab="equipment">🛒 商店</button><button class="tab" data-tab="boss">👹 Boss</button><button class="tab" data-tab="achievements">🏆 成就</button><button class="tab" data-tab="ranking">📊 排行榜</button>
-<button class="tab" data-tab="quests">📜 每日任務</button><button class="tab" data-tab="player">👤 玩家</button><button class="tab" data-tab="save">💾 存檔</button>
+<button class="tab" data-tab="quests">🔤 26字母發音</button><button class="tab" data-tab="player">👤 玩家</button><button class="tab" data-tab="save">💾 存檔</button>
 </div>
 
 <div class="card quick">
 <b style="padding:10px 3px">🎮 快速選項：</b>
-<button onclick="showTab('learn')">📚 學習</button><button class="primary" onclick="startChallenge()">🎯 開始挑戰</button><button onclick="showTab('mind')">🧠 Mind Map</button><button onclick="showTab('world')">🌍 世界地圖</button><button onclick="showTab('boss')">👹 Boss</button>
+<button onclick="showTab('learn')">📚 學習</button><button class="primary" onclick="startChallenge()">🎯 開始挑戰</button><button onclick="showTab('mind')">🧠 Mind Map</button><button onclick="showTab('world')">🌍 世界地圖</button><button onclick="showTab('boss')">👹 Boss</button><button onclick="showTab('quests')">🔤 26字母發音</button>
 </div>
 
 <section id="learn" class="panel active"><div class="grid2"><div class="card">
 <div class="head"><div><div class="muted">目前關卡</div><div id="pattern" class="pattern"></div><div id="meta" class="muted"></div></div><select id="level"></select></div>
 <div style="margin-top:12px"><div class="muted">172關通關進度</div><div class="bar"><i id="progressBar"></i></div></div>
 <div id="words" class="words"></div><div id="story" class="story"></div>
-<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px"><button class="primary" onclick="speakPattern()">🔊 聽組合音</button><button onclick="speakAll()">▶️ 全部播放</button><button onclick="showTab('mind')">🧠 Mind Map</button><button onclick="startChallenge()">🎮 挑戰本關</button></div>
+<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px"><button class="primary" onclick="speakPattern()">🔊 聽組合音</button><button onclick="speakAll()">▶️ 全部播放</button><button onclick="showTab('mind')">🧠 Mind Map</button><button onclick="startChallenge()">🎮 挑戰本關</button><button class="primary" onclick="nextLevel()">➡️ 下一關</button></div>
 </div><div class="card">
 <div class="title">🎯 學習流程</div><div class="story">看字 → 拆音節 → 找組合音 → 標重音 → 聽讀 → 連結意思 → 進入故事 → 挑戰 → 戰鬥 → Boss</div>
 <div class="title" style="margin-top:18px">🌍 所在區域</div><div id="regionInfo"></div>
 </div></div></section>
 
-<section id="game" class="panel"><div class="card"><div class="title">🎮 挑戰模式</div><div class="muted">6題／輪。答對 +10 XP、+1⭐、+1 Combo、+10 HP；答錯 -10 HP。</div><div id="qbox" class="qbox"></div><div id="choices" class="choices"></div><div id="feedback" class="feedback"></div><button class="primary" id="nextQ">下一題</button></div></section>
+<section id="game" class="panel"><div class="card"><div class="title">🎮 挑戰模式</div><div class="muted">6題／輪。答對 +10 XP、+1⭐、+1 Combo、+10 HP；答錯 -10 HP。</div><div id="qbox" class="qbox"></div><div id="choices" class="choices"></div><div id="feedback" class="feedback"></div><button class="primary" id="nextQ">下一題</button> <button onclick="nextLevel()">➡️ 下一關</button></div></section>
 
 
 
-<section id="mind" class="panel"><div class="card"><div class="head"><div><div class="title">🧠 172英文單字關聯心智圖</div><div class="muted">單字 → 發音拆解 → 母音核心 → 音節 → 組合拼讀 → 重音 → KK音標 → 中文 → 故事</div></div><select id="mindLevel"></select></div><div id="mindCanvas" class="mind" style="margin-top:12px"></div><div id="mindInfo" class="story">點擊節點查看關聯。</div></div></section>
+<section id="mind" class="panel"><div class="card"><div class="head"><div><div class="title">🧠 172英文單字關聯心智圖</div><div class="muted">單字 → 發音拆解 → 母音核心 → 音節 → 組合拼讀 → 重音 → KK音標 → 例句 → 故事聯想 → 英語發音 → 中文字幕</div></div><select id="mindLevel"></select></div><div id="mindCanvas" class="mind" style="margin-top:12px"></div><div id="mindInfo" class="story">點擊「📝 例句發音」會直接進入例句並播放英文。</div></div></section>
 
 <section id="world" class="panel"><div class="card"><div class="title">🌍 七大世界區域</div><div id="worldGrid" class="map"></div></div></section>
 <section id="character" class="panel"><div class="card"><div class="title">🐾 金幣兌換寵物</div><div id="skills" class="grid"></div></div></section>
 <section id="equipment" class="panel"><div class="card"><div class="title">🛒 寵物升級商店</div><div id="equip" class="grid"></div></div></section>
 <section id="boss" class="panel"><div class="card"><div class="title">👹 區域 Boss</div><div id="bossPanel"></div></div></section>
 <section id="achievements" class="panel"><div class="card"><div class="title">🏆 成就系統</div><div id="ach" class="grid"></div></div></section>
-<section id="ranking" class="panel"><div class="card"><div class="title">📊 排行榜</div><div id="rank"></div></div></section>
-<section id="quests" class="panel"><div class="card"><div class="title">📜 每日任務</div><div id="quests" class="grid"></div></div></section>
+<section id="ranking" class="panel"><div class="card">
+<div class="title">📊 排行榜</div>
+<div class="title" style="font-size:18px;margin-top:12px">👤 玩家排行榜</div>
+<div id="rank"></div>
+<div class="title" style="font-size:18px;margin-top:20px">🐾 寵物排行榜</div>
+<div class="muted">顯示玩家名稱、寵物名稱、等級與 EXP；目前使用中的寵物會標示 ⭐。</div>
+<div id="petRank" style="margin-top:8px"></div>
+</div></section>
+<section id="quests" class="panel"><div class="card">
+<div class="title">🔤 26字母自然發音練習</div>
+<div class="muted">每日練習 A–Z：看字母 → 聽自然發音 → 跟讀 → 找出對應聲音。</div>
+<div style="margin-top:12px"><div class="muted">今日進度：<span id="letterProgressText">0/26</span></div>
+<div class="bar"><i id="letterProgressBar" style="width:0%"></i></div></div>
+<div id="letterPractice" class="grid" style="margin-top:14px"></div>
+</div></section>
 <section id="player" class="panel"><div class="card"><div class="title">👤 玩家設定</div>
 <p>目前玩家名稱：<b id="playerCurrentName">玩家</b></p>
 <div style="display:flex;gap:8px;flex-wrap:wrap"><input id="playerNameInput" maxlength="20" placeholder="輸入玩家名稱" style="flex:1;min-width:220px;padding:11px 13px;border:1px solid var(--line);border-radius:12px;font:inherit">
@@ -141,6 +154,29 @@ function unlocked(n){return n===1||state.done.includes(n-1)}
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function shuffle(a){return a.slice().sort(()=>Math.random()-.5)}
 function speak(t){if(!window.speechSynthesis)return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=.86;window.speechSynthesis.speak(u)}
+function speakChinese(t){
+  if(!window.speechSynthesis)return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(t);
+  u.lang="zh-TW";
+  u.rate=.9;
+  u.pitch=1;
+  const voices=window.speechSynthesis.getVoices();
+  const zh=voices.find(v=>/^zh-TW/i.test(v.lang))||voices.find(v=>/^zh/i.test(v.lang));
+  if(zh)u.voice=zh;
+  window.speechSynthesis.speak(u);
+}
+function speakEnglish(t){
+  if(!window.speechSynthesis)return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(t);
+  u.lang="en-US";
+  u.rate=.86;
+  const voices=window.speechSynthesis.getVoices();
+  const en=voices.find(v=>/^en-US/i.test(v.lang))||voices.find(v=>/^en/i.test(v.lang));
+  if(en)u.voice=en;
+  window.speechSynthesis.speak(u);
+}
 
 function updateHUD(){normalize();const hp=document.getElementById("Hpet");if(hp){const pp=PETS.find(p=>p.id===state.currentPet);hp.textContent=pp?pp.emoji+" "+pp.name:"無";}document.getElementById("Hname").textContent=state.playerName;document.getElementById("Hstars").textContent=state.stars;document.getElementById("Hxp").textContent=state.xp;document.getElementById("Hcombo").textContent=state.combo;document.getElementById("Hhp").textContent=state.hp;document.getElementById("Hcoins").textContent=state.coins||0;document.getElementById("Hprogress").textContent=state.done.length+"/172";document.getElementById("progressBar").style.width=(state.done.length/172*100)+"%";const pn=document.getElementById("playerNameDisplay");if(pn)pn.textContent=state.playerName}
 function showTab(id){document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("active",p.id===id));document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===id));if(id==="learn")renderLearn();if(id==="game"){if(!quiz.items.length)buildQuiz();else renderQuestion()}if(id==="mind")renderMind();if(id==="world")renderWorld();if(id==="character")renderCharacter();if(id==="equipment")renderEquipment();if(id==="boss")renderBoss();if(id==="achievements")renderAchievements();if(id==="ranking")renderRanking();if(id==="quests")renderQuests();if(id==="save")renderSave()}
@@ -181,7 +217,22 @@ function answer(choice){
   }
   save();
 }
-document.getElementById("nextQ").onclick=()=>{if(!quiz.answered){document.getElementById("feedback").textContent="請先回答";return}quiz.i++;if(quiz.i>=quiz.items.length){completeLevel(state.level);document.getElementById("qbox").innerHTML="<b>🎉 本輪完成！</b><br>下一關已解鎖。";document.getElementById("choices").innerHTML="";document.getElementById("feedback").textContent="➡️ 繼續下一關";quiz.items=[]}else renderQuestion()}
+document.getElementById("nextQ").onclick=()=>{if(!quiz.answered){document.getElementById("feedback").textContent="請先回答";return}quiz.i++;if(quiz.i>=quiz.items.length){completeLevel(state.level);document.getElementById("qbox").innerHTML="<b>🎉 本輪完成！</b><br>下一關已解鎖。";document.getElementById("choices").innerHTML="";document.getElementById("feedback").innerHTML=`✅ 本關完成！<button class="primary small" onclick="nextLevel()">➡️ 前往下一關</button>`;quiz.items=[]}else renderQuestion()}
+function nextLevel(){
+  const n=Number(state.level)||1;
+  if(n>=172){alert("🎉 恭喜！你已完成全部 172 關！");return}
+  if(!state.done.includes(n)){
+    alert("🔒 請先完成目前關卡，再進入下一關。");
+    showTab("game");
+    return;
+  }
+  state.level=n+1;
+  save();
+  populateLevels();
+  renderLearn();
+  showTab("learn");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
 function completeLevel(n){if(!state.done.includes(n)){state.done.push(n);state.xp+=20;state.stars+=2;state.coins=(state.coins||0)+10}if([25,55,95,115,145,160,172].includes(n)){const r=reg(n);if(!state.bossDone.includes(r.id))state.bossDone.push(r.id)}if(n<172)state.level=n+1;save();populateLevels();renderLearn();renderBoss()}
 
 
@@ -196,6 +247,79 @@ function completeLevel(n){if(!state.done.includes(n)){state.done.push(n);state.x
 
 
 const MP={center:[50,50],sound:[50,15],meaning:[50,85],syll:[18,50],stress:[82,50],image:[28,24],story:[28,76],listen:[72,24],game:[72,76],words:[[8,12],[22,5],[39,7],[61,7],[78,5],[92,12],[92,88],[78,95],[61,93],[39,93],[22,95],[8,88]]};
+function grammarFor(w, sentenceIndex){
+  const x=String(w.word||"").toLowerCase();
+  const custom={
+    "like":["S + like(s) + noun.","主詞 + 喜歡 + 名詞。","一般現在式：like 表示喜好。"],
+    "bike":["S + V + to + place.","主詞 + 動詞 + to + 地點。","一般現在式：描述日常移動。"],
+    "hike":["S + V + place/time.","主詞 + 動詞 + 地點／時間。","一般現在式：描述日常活動。"],
+    "kite":["The + noun + be + adjective.","這個＋名詞＋是＋形容詞。","be 動詞句：描述事物狀態。"],
+    "bite":["S + V + object.","主詞 + 動詞 + 受詞。","一般現在式：描述動作。"]
+  };
+  return custom[x] || ["S + V + O.","主詞 + 動詞 + 受詞。","基本英文句型：主詞＋動詞＋受詞。"];
+}
+function pronunciationText(w, sentence){
+  return w.sentenceKK||w.exampleKK||w.kk||w.ipa||w.phonetic||"點擊播放聽英文發音";
+}
+function storySubtitleData(w,d){
+  return storyStructure(w,d).map((line,i)=>({
+    en:line[0],
+    zh:line[1],
+    grammar:grammarFor(w,i),
+    pron:(w.sentenceKK||w.exampleKK||w.kk||w.ipa||w.phonetic||"English pronunciation"),
+    index:i+1
+  }));
+}
+function playStoryWithSubtitles(w,d){
+  const lines=storySubtitleData(w,d);
+  const box=document.getElementById("mindSubtitle");
+  if(box)box.innerHTML="";
+  lines.forEach((line,i)=>{
+    setTimeout(()=>{
+      if(box){
+        box.innerHTML=
+          `<div style="font-size:13px;color:#667085">Story ${line.index}/4</div>`+
+          `<div style="font-size:23px;font-weight:900;margin-top:3px">${esc(line.en)}</div>`+
+          `<div style="font-size:19px;margin-top:5px">🇹🇼 ${esc(line.zh)}</div>`+
+          `<div class="muted" style="margin-top:5px">🔤 ${esc(line.pron)}</div>`+
+          `<div style="margin-top:8px"><button class="small" onclick='speakChinese(${JSON.stringify(line.zh)})'>🗣️ 播放中文</button></div>`;
+      }
+      speakEnglish(line.en);
+    },i*3200);
+  });
+}
+function storyStructure(w,d){
+  const words=(d?.words||[]).slice(0,4);
+  const W=words.length>=4?words:[w,w,w,w];
+  const key=W.map(x=>String(x.word||"").toLowerCase()).join("|");
+  const presets={
+    "cat|hat|bat|mat":[
+      ["The cat wears a hat.","Cat 戴著 Hat。"],
+      ["The cat holds a bat.","Cat 拿著 Bat。"],
+      ["The cat sits on a mat.","Cat 坐在 Mat 上。"],
+      ["Cat smiles in the funny hat!","Cat 戴著有趣的 Hat 開心地笑！"]
+    ],
+    "like|bike|hike|kite":[
+      ["I like my bike.","我喜歡我的 Bike。"],
+      ["I ride my bike to hike.","我騎著 Bike 去健行。"],
+      ["We hike up the hill with a kite.","我們帶著 Kite 爬上小山。"],
+      ["We laugh when the kite flies high.","風箏飛高時，我們開心地大笑。"]
+    ]
+  };
+  if(presets[key])return presets[key];
+  const [a,b,c,e]=W;
+  return [
+    [`The ${a.word} meets the ${b.word}.`,` ${a.word} 遇見了 ${b.word}。`.trim()],
+    [`The ${a.word} uses the ${c.word}.`,` ${a.word} 使用了 ${c.word}。`.trim()],
+    [`Then the ${e.word} appears in the story.`,`接著 ${e.word} 出現在故事裡。`],
+    [`Everyone laughs and the story ends happily.`,`大家開心大笑，故事愉快地結束了。`]
+  ];
+}
+function speakStory(w,d){
+  const lines=storyStructure(w,d).map(x=>x[0]);
+  lines.forEach((line,i)=>setTimeout(()=>speak(line),i*1800));
+}
+
 function phonicsBreakdown(w){
   const syll=Array.isArray(w.syllables)?w.syllables:[];
   const vowelRe=/[aeiouy]+/ig;
@@ -206,14 +330,12 @@ function phonicsBreakdown(w){
 }
 function renderMind(){
   const d=get(state.level),map=document.getElementById("mindCanvas"),ws=d.words||[];
-  const M={center:[50,50],phonics:[50,14],vowels:[16,50],syll:[50,86],blend:[84,50],stress:[84,18],meaning:[16,82],story:[84,82],
+  const M={center:[50,50],phonics:[50,14],vowels:[16,50],syll:[50,86],blend:[84,50],stress:[84,18],meaning:[16,82],story:[84,82],example:[16,92],
     words:[[7,16],[22,6],[39,6],[61,6],[78,6],[93,16],[93,84],[78,94],[61,94],[39,94],[22,94],[7,84]]};
   let lines="";
-  [["phonics",50,14],["vowels",16,50],["syll",50,86],["blend",84,50],["stress",84,18],["meaning",16,82],["story",84,82]]
+  [["phonics",50,14],["vowels",16,50],["syll",50,86],["blend",84,50],["stress",84,18],["meaning",16,82],["story",84,82],["example",16,92]]
     .forEach(x=>lines+=`<line x1="50%" y1="50%" x2="${x[1]}%" y2="${x[2]}%" stroke="#9aa6b5" stroke-width="2"/>`);
   ws.forEach((w,i)=>{const p=M.words[i%M.words.length];lines+=`<line x1="50%" y1="50%" x2="${p[0]}%" y2="${p[1]}%" stroke="#c6cdd7" stroke-width="1.5"/>`});
-  const center=`<button class="mnode mcenter" style="left:50%;top:50%" onclick="mindInfo('center')">
-    🧠<b>${esc(d.pattern)}</b><small>${esc(d.sound||"")}</small><small>Word Family</small></button>`;
   const nodes=[
     ["phonics","🔤","發音拆解","字母 → 音值"],
     ["vowels","🔵","母音核心","找出母音組合"],
@@ -221,26 +343,40 @@ function renderMind(){
     ["blend","🔗","組合拼讀","逐音 → 合音"],
     ["stress","🔥","重音","強讀音節"],
     ["meaning","🇹🇼","詞義","聲音連結意思"],
-    ["story","📖","故事","把單字放入情境"]
+    ["story","📖","故事學習","4單字故事＋聯想"],
+    ["example","📝","例句發音","點擊直接進入並播放"]
   ];
-  map.innerHTML=`<svg viewBox="0 0 100 100" preserveAspectRatio="none">${lines}</svg>${center}`+
-    nodes.map(n=>`<button class="mnode" style="left:${M[n[0]][0]}%;top:${M[n[0]][1]}%" onclick="mindInfo('${n[0]}')">${n[1]}<b>${n[2]}</b><small>${n[3]}</small></button>`).join("")+
-    ws.map((w,i)=>{
-      const p=M.words[i%M.words.length],b=phonicsBreakdown(w);
-      return `<button class="mnode" style="left:${p[0]}%;top:${p[1]}%;min-width:150px" onclick="mindWord(${i})">
+  map.innerHTML=`<svg viewBox="0 0 100 100" preserveAspectRatio="none">${lines}</svg>
+    <button class="mnode mcenter" style="left:50%;top:50%" onclick="mindInfo('center')">🧠<b>${esc(d.pattern)}</b><small>${esc(d.sound||"")}</small><small>Word Family</small></button>`
+    +nodes.map(n=>`<button class="mnode" style="left:${M[n[0]][0]}%;top:${M[n[0]][1]}%" onclick="mindInfo('${n[0]}')">${n[1]}<b>${n[2]}</b><small>${n[3]}</small></button>`).join("")
+    +ws.map((w,i)=>{
+      const p=M.words[i%M.words.length],b=phonicsBreakdown(w),story=storySubtitleData(w,d);
+      return `<button class="mnode" style="left:${p[0]}%;top:${p[1]}%;min-width:170px" onclick="mindWord(${i})">
         <b>${esc(w.emoji||"🔤")} ${esc(w.word)}</b>
         <small>母音：${esc(b.vowels||"—")}</small>
         <small>音節：${esc(b.syll.join(" · ")||"—")}</small>
-        <small>拼讀：${esc(b.soundParts.join(" → ")||w.word)}</small>
+        <small>例句：${esc(story[0].en)}</small>
+        <small>🇹🇼 ${esc(story[0].zh)}</small>
       </button>`;
     }).join("");
-  document.getElementById("mindInfo").innerHTML=`<b>🧠 English Phonics Map</b><br>單字 → 發音拆解 → 母音 → 音節 → 組合拼讀 → 完整讀音。點擊單字查看完整讀音流程。`;
+  document.getElementById("mindInfo").innerHTML=`<b>🧠 172組合音故事單詞卡</b><br>4個母音單字 → 例句發音 → 故事聯想 → 文法 → 中文字幕。`;
+  let sub=document.getElementById("mindSubtitle");
+  if(!sub){
+    sub=document.createElement("div");sub.id="mindSubtitle";sub.className="story";
+    map.parentNode.insertBefore(sub,map.nextSibling);
+  }
+  sub.innerHTML=`<b>🎬 中英發音字幕</b><br>點擊單字後播放英文，這裡同步顯示英文字幕與中文字幕。`;
+
+  const ov=document.getElementById("mindStoryWords");
+  if(ov){
+    ov.innerHTML=(d.words||[]).slice(0,4).map((w,i)=>`<div class="wordcard"><div class="emoji">${esc(w.emoji||"🔤")}</div><div class="word">${i+1}. ${esc(w.word)}</div><div class="muted">${esc(w.zh||"")}</div><div class="tag">故事角色 ${i+1}</div></div>`).join("");
+  }
 }
 function mindWord(i){
   const d=get(state.level),w=d.words[i],b=phonicsBreakdown(w);
   const syll=b.syll.length?b.syll.join(" · "):"—";
   const kk=w.kk||w.ipa||w.phonetic||"—";
-  const blend=b.soundParts.length?b.soundParts.join(" → "):w.word;
+  const story=storySubtitleData(w,d);
   speak(w.word);
   document.getElementById("mindInfo").innerHTML=`
     <div style="font-size:26px;font-weight:900">📚 ${esc(w.word)}</div>
@@ -251,34 +387,91 @@ function mindWord(i){
       <hr style="border:0;border-top:1px solid #ead9bd;margin:10px 0">
       <b>③ Syllable Split</b><br>${esc(syll)}
       <hr style="border:0;border-top:1px solid #ead9bd;margin:10px 0">
-      <b>④ Blend the Sounds</b><br>${esc(blend)} → <strong>${esc(w.word)}</strong>
+      <b>④ Blend the Sounds</b><br>${esc(b.soundParts.join(" → ")||w.word)} → <strong>${esc(w.word)}</strong>
       <hr style="border:0;border-top:1px solid #ead9bd;margin:10px 0">
       <b>⑤ Stress</b><br>${esc(w.stress||"—")}
       <hr style="border:0;border-top:1px solid #ead9bd;margin:10px 0">
       <b>⑥ KK / IPA</b><br><span style="font-family:Georgia,serif;font-size:21px">${esc(kk)}</span>
       <hr style="border:0;border-top:1px solid #ead9bd;margin:10px 0">
-      <b>⑦ Meaning</b><br>${esc(w.zh||"—")}
+      <b>⑦ Story Sentence + Grammar</b>
+      ${story.map((line,n)=>`
+        <div style="margin-top:12px;padding:10px;border:1px solid #ead9bd;border-radius:12px;background:#fffaf2">
+          <b>Sentence ${n+1}</b><br>
+          <span style="font-size:19px;font-weight:800">${esc(line.en)}</span><br>
+          <span class="muted">🇹🇼 ${esc(line.zh)}</span><br>
+          <span>📐 ${esc(line.grammar[0])}</span><br>
+          <span class="muted">${esc(line.grammar[1])}</span><br>
+          <span class="muted">💡 ${esc(line.grammar[2])}</span><br>
+          <span>🔤 ${esc(line.pron)}</span>
+          <div style="margin-top:8px;display:flex;gap:7px;flex-wrap:wrap">
+            <button class="primary small" onclick='speak(${JSON.stringify(line.en)})'>🔊 Play English</button>
+            <button class="small" onclick='speakChinese(${JSON.stringify(line.zh)})'>🗣️ 播放中文語音（台灣中文）</button>
+          </div>
+        </div>`).join("")}
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="primary small" onclick='speak(${JSON.stringify(w.word)})'>🔊 Play Word</button>
+        <button class="primary small" onclick='playStoryWithSubtitles(get(${Number(state.level)}).words[${i}],get(${Number(state.level)}))'>🎬 Play Story + Subtitles</button>
+      </div>
     </div>`;
+  playStoryWithSubtitles(w,d);
 }
 function mindInfo(k){
-  const d=get(state.level),ws=d.words||[];
+  const d=get(state.level),ws=(d.words||[]).slice(0,4);
   if(k==="center"){
-    document.getElementById("mindInfo").innerHTML=`<b>🧠 ${esc(d.pattern)}</b><br>這一組先找共同發音，再把每個單字拆成「母音 → 音節 → 拼讀 → 完整單字」。`;
+    document.getElementById("mindInfo").innerHTML=`<b>🧠 ${esc(d.pattern)}</b><br>4個同組單字 → 故事聯想 → 例句 → 發音。`;
   }else if(k==="phonics"){
     document.getElementById("mindInfo").innerHTML="<b>🔤 發音拆解</b><br>"+ws.map(w=>{const b=phonicsBreakdown(w);return `${esc(w.word)}：${esc(b.soundParts.join(" → "))}`}).join("<br>");
   }else if(k==="vowels"){
     document.getElementById("mindInfo").innerHTML="<b>🔵 母音核心</b><br>"+ws.map(w=>{const b=phonicsBreakdown(w);return `${esc(w.word)}：母音 ${esc(b.vowels||"—")}`}).join("<br>");
   }else if(k==="syll"){
-    document.getElementById("mindInfo").innerHTML="<b>🧩 母音拆音節</b><br>"+ws.map(w=>`${esc(w.word)}：${esc((w.syllables||[]).join(" · ")||"—")}`).join("<br>");
+    document.getElementById("mindInfo").innerHTML="<b>🧩 音節</b><br>"+ws.map(w=>`${esc(w.word)}：${esc((w.syllables||[]).join(" · ")||"—")}`).join("<br>");
   }else if(k==="blend"){
-    ws.forEach((w,i)=>setTimeout(()=>speak(w.word),i*1000));
     document.getElementById("mindInfo").innerHTML="<b>🔗 組合拼讀</b><br>"+ws.map(w=>{const b=phonicsBreakdown(w);return `${esc(b.soundParts.join(" → "))} → <strong>${esc(w.word)}</strong>`}).join("<br>");
   }else if(k==="stress"){
     document.getElementById("mindInfo").innerHTML="<b>🔥 重音</b><br>"+ws.map(w=>`${esc(w.word)}：${esc(w.stress||"—")}`).join("<br>");
   }else if(k==="meaning"){
     document.getElementById("mindInfo").innerHTML="<b>🇹🇼 詞義</b><br>"+ws.map(w=>`${esc(w.word)}：${esc(w.zh||"—")}`).join("<br>");
+  }else if(k==="example"){
+    const first=ws[0];
+    if(!first){
+      document.getElementById("mindInfo").innerHTML="<b>📝 例句發音</b><br>本組沒有可播放的單字。";
+      return;
+    }
+    const s=storyStructure(first,d);
+    const line=s.lines[0]||["",""];
+    const en=String(line[0]||"");
+    const zh=String(line[1]||"");
+    document.getElementById("mindInfo").innerHTML=`
+      <b>📝 例句發音</b><br>
+      <div style="margin-top:10px;padding:14px;background:#fff;border:1px solid #dbe3ee;border-radius:14px">
+        <div style="font-size:22px;font-weight:900">🇬🇧 ${esc(en)}</div>
+        <div style="font-size:19px;margin-top:6px">🇹🇼 ${esc(zh)}</div>
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+          <button type="button" class="primary small" id="mindPlayExampleEnglish">🔊 English Example</button>
+          <button type="button" class="small" id="mindPlayExampleChinese">🗣️ 中文發音</button>
+          <button type="button" class="primary small" id="mindPlayExampleStory">🎬 故事播放</button>
+        </div>
+      </div>`;
+
+    const enBtn=document.getElementById("mindPlayExampleEnglish");
+    const zhBtn=document.getElementById("mindPlayExampleChinese");
+    const storyBtn=document.getElementById("mindPlayExampleStory");
+
+    if(enBtn) enBtn.onclick=()=>speakEnglish(en);
+    if(zhBtn) zhBtn.onclick=()=>speakChinese(zh);
+    if(storyBtn) storyBtn.onclick=()=>playStoryWithSubtitles(first,d);
+
+    // 進入「例句」選項時直接播放英文例句。
+    setTimeout(()=>speakEnglish(en),180);
   }else if(k==="story"){
-    document.getElementById("mindInfo").innerHTML="<b>📖 故事</b><br>"+esc(d.story||"");
+    const first=ws[0],s=first?storyStructure(first,d):null;
+    document.getElementById("mindInfo").innerHTML=s?`
+      <b>📖 4單字故事聯想</b><br>
+      <div style="margin-top:8px;font-size:20px;font-weight:900">${esc(s.mnemonic)}</div>
+      <div style="margin-top:8px;font-size:18px"><b>🇬🇧 ${esc(s.english)}</b></div>
+      <div class="muted" style="margin-top:4px">4個單字放進同一個故事畫面。</div>
+      ${s.lines.map((l,i)=>`<div style="margin-top:10px"><b>${i+1}. ${esc(l[0])}</b><br><span class="muted">🇹🇼 ${esc(l[1])}</span></div>`).join("")}
+      <div style="margin-top:12px"><button class="primary small" onclick='playStoryWithSubtitles(get(${Number(state.level)}).words[0],get(${Number(state.level)}))'>🎬 播放故事</button></div>`:"";
   }
 }
 function renderWorld(){document.getElementById("worldGrid").innerHTML=REGIONS.map(r=>{const done=state.done.filter(n=>n>=r.start&&n<=r.end).length,total=r.end-r.start+1,p=Math.round(done/total*100);let nums="";for(let n=r.start;n<=r.end;n++)nums+=`<span class="lvl ${state.done.includes(n)?"done ":""}${n===state.level?"now ":""}${unlocked(n)?"":"lock"}">${n}</span>`;return `<div class="region"><h3>${r.name}</h3><div class="muted">${r.desc}</div><p>${done}/${total} · ${p}%</p><div class="bar"><i style="width:${p}%"></i></div><div class="mini">${nums}</div><button onclick="go(${r.start})">進入</button></div>`}).join("")}
@@ -383,14 +576,105 @@ function renderRanking(){
   document.getElementById("rank").innerHTML=rows.map((r,i)=>`
     <div class="rank ${i===4?"me":""}">
       <b>${r[0]}</b>
-      <span>${esc(r[1])}<br><small>${r[3]} 關</small></span>
+      <span>👤 ${esc(r[1])}<br><small>${r[3]} 關</small></span>
       <b>${r[2]} XP</b>
+    </div>`).join("");
+
+  const petsOwned=Array.isArray(state.ownedPets)?state.ownedPets:[];
+  const petRows=petsOwned.map(id=>{
+    const p=PETS.find(x=>x.id===id);
+    if(!p)return null;
+    return {
+      player:player,
+      name:p.name,
+      emoji:p.emoji,
+      level:Number(state.petLevels?.[id]||1),
+      exp:Number(state.petExp?.[id]||0),
+      active:state.currentPet===id
+    };
+  }).filter(Boolean).sort((a,b)=>b.level-a.level||b.exp-a.exp);
+
+  const petRank=document.getElementById("petRank");
+  if(!petRank)return;
+
+  if(!petRows.length){
+    petRank.innerHTML=`<div class="tile">
+      <div class="icon">🐾</div>
+      <b>尚未擁有寵物</b>
+      <p class="muted">前往「🐾 寵物」使用金幣兌換寵物。</p>
+    </div>`;
+    return;
+  }
+
+  petRank.innerHTML=petRows.map((p,i)=>`
+    <div class="rank ${p.active?"me":""}">
+      <b>#${i+1}</b>
+      <span>
+        👤 <strong>${esc(p.player)}</strong><br>
+        ${p.emoji} <strong>${esc(p.name)}</strong> ${p.active?"⭐":""}<br>
+        <small>Lv.${p.level} · EXP ${p.exp}</small>
+      </span>
+      <b>Lv.${p.level}</b>
     </div>`).join("");
 }
 function renderQuests(){const d=JSON.parse(localStorage.getItem(KEY+"_day")||'{"listen":0,"battle":0,"explore":0}');document.getElementById("quests").innerHTML=[["🎧","聽音任務",d.listen],["⚔️","戰鬥任務",d.battle],["🔎","探索任務",d.explore]].map(x=>`<div class="tile"><div class="icon">${x[0]}</div><b>${x[1]}</b><p>${x[2]}/3</p></div>`).join("")}
 function renderPlayer(){const n=state.playerName||"玩家";const a=document.getElementById("playerNameDisplay");const b=document.getElementById("playerCurrentName");const c=document.getElementById("playerNameInput");if(a)a.textContent=n;if(b)b.textContent=n;if(c)c.value=n}
 function savePlayerName(){const i=document.getElementById("playerNameInput");const n=(i?.value||"").trim().slice(0,20);if(!n){alert("玩家名稱不能空白");return}state.playerName=n;localStorage.setItem(KEY,JSON.stringify(state));updateHUD();renderPlayer();renderSave();alert("✅ 玩家名稱已修改為："+n)}
 function editPlayerName(){showTab("player");setTimeout(()=>document.getElementById("playerNameInput")?.focus(),50)}
+
+const LETTERS=[
+["A","/æ/","apple"],["B","/b/","ball"],["C","/k/","cat"],["D","/d/","dog"],
+["E","/ɛ/","egg"],["F","/f/","fish"],["G","/g/","goat"],["H","/h/","hat"],
+["I","/ɪ/","igloo"],["J","/dʒ/","jet"],["K","/k/","kite"],["L","/l/","lion"],
+["M","/m/","moon"],["N","/n/","net"],["O","/ɒ/","octopus"],["P","/p/","pig"],
+["Q","/kw/","queen"],["R","/r/","rabbit"],["S","/s/","sun"],["T","/t/","top"],
+["U","/ʌ/","up"],["V","/v/","van"],["W","/w/","web"],["X","/ks/","box"],
+["Y","/j/","yellow"],["Z","/z/","zebra"]
+];
+function letterDayKey(){return new Date().toISOString().slice(0,10)}
+function loadLetterDaily(){
+  const key="phonics172_letter_daily_"+letterDayKey();
+  try{
+    const x=JSON.parse(localStorage.getItem(key)||'{"done":[]}');
+    if(!Array.isArray(x.done))x.done=[];
+    return x;
+  }catch(e){return {done:[]}}
+}
+function saveLetterDaily(x){localStorage.setItem("phonics172_letter_daily_"+letterDayKey(),JSON.stringify(x))}
+function speakLetter(letter){
+  if(!window.speechSynthesis)return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(letter);
+  u.lang="en-US";u.rate=.8;
+  const voices=window.speechSynthesis.getVoices();
+  const en=voices.find(v=>/^en-US/i.test(v.lang))||voices.find(v=>/^en/i.test(v.lang));
+  if(en)u.voice=en;
+  window.speechSynthesis.speak(u);
+}
+function practiceLetter(i){
+  const data=loadLetterDaily(),L=LETTERS[i];
+  speakLetter(L[0]);
+  setTimeout(()=>speakEnglish(L[2]),900);
+  if(!data.done.includes(i))data.done.push(i);
+  saveLetterDaily(data);
+  renderQuests();
+}
+function renderQuests(){
+  const data=loadLetterDaily(),done=new Set(data.done||[]);
+  const wrap=document.getElementById("letterPractice");
+  if(!wrap)return;
+  wrap.innerHTML=LETTERS.map((L,i)=>`<div class="tile ${done.has(i)?"":"locked"}" style="cursor:pointer" onclick="practiceLetter(${i})">
+    <div class="icon" style="font-size:38px">${L[0]}</div>
+    <b>${L[0]}</b>
+    <p style="font-size:20px;font-family:Georgia,serif;margin:5px 0">${L[1]}</p>
+    <div class="muted">例字：${L[2]}</div>
+    <button class="primary small" type="button" onclick="event.stopPropagation();practiceLetter(${i})">${done.has(i)?"✅ 再練習":"🔊 聽發音"}</button>
+  </div>`).join("");
+  const n=done.size;
+  const t=document.getElementById("letterProgressText"),b=document.getElementById("letterProgressBar");
+  if(t)t.textContent=`${n}/26`;
+  if(b)b.style.width=(n/26*100)+"%";
+}
 function renderSave(){const inp=document.getElementById("playerNameInput");if(inp)inp.value=state.playerName;document.getElementById("saveInfo").innerHTML=`👤 玩家：<b>${esc(state.playerName)}</b><br>🎯 通關：${state.done.length}/172<br>✨ XP：${state.xp}<br>⭐ 星星：${state.stars}<br>🪙 金幣：${state.coins||0}<br>🐾 寵物：${state.currentPet?(PETS.find(p=>p.id===state.currentPet)?.emoji+" "+PETS.find(p=>p.id===state.currentPet)?.name):"未選擇"}<br>💾 存檔：已啟用`}
 function setPlayerName(){const inp=document.getElementById("playerNameInput");const name=(inp?.value||"").trim().slice(0,20);if(!name){alert("請輸入玩家名稱");return}state.playerName=name;save();renderSave();alert("✅ 玩家名稱已儲存："+name)}
 function changePlayerName(){const name=prompt("請輸入新的玩家名稱：",state.playerName);if(name===null)return;const n=name.trim().slice(0,20);if(!n){alert("玩家名稱不能空白");return}state.playerName=n;save();renderSave();}
@@ -400,3 +684,4 @@ function renderAll(){renderWorld();renderCharacter();renderEquipment();renderBos
 normalize();populateLevels();renderLearn();updateHUD();renderAll();renderPlayer();buildQuiz();if(state.playerName==="玩家"){setTimeout(()=>{const n=prompt("🎮 歡迎來到 172組合音故事單詞卡！\n請輸入你的玩家名稱：","玩家");if(n!==null&&n.trim()){state.playerName=n.trim().slice(0,20);save();}},250)}
 </script>
 </body></html>
+
