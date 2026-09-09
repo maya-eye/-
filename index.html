@@ -125,6 +125,16 @@ border:2px solid #6366f1;box-shadow:0 18px 45px #11182733}
 @media(max-width:800px){.pk-online-grid{grid-template-columns:1fr}.pk-online{margin:10px 10px 0}}
 
 </style>
+<style>
+#playerNameInput{
+  -webkit-user-select:text;
+  user-select:text;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+  font-size:16px !important;
+}
+#playerNameInput:focus{outline:2px solid rgba(59,130,246,.35);outline-offset:2px}
+</style>
 </head>
 <body>
 <div id="deviceSwitcher">
@@ -229,12 +239,12 @@ border:2px solid #6366f1;box-shadow:0 18px 45px #11182733}
 </div></section>
 <section id="player" class="panel"><div class="card"><div class="title">👤 玩家設定</div><p class="muted">首次使用可在這裡設定玩家名稱，不會再跳出阻擋遊戲的視窗。</p>
 <p>目前玩家名稱：<b id="playerCurrentName">玩家</b></p>
-<div style="display:flex;gap:8px;flex-wrap:wrap"><input id="playerNameInput" maxlength="20" placeholder="輸入玩家名稱" style="flex:1;min-width:220px;padding:11px 13px;border:1px solid var(--line);border-radius:12px;font:inherit">
+<div style="display:flex;gap:8px;flex-wrap:wrap"><input id="playerNameInput" autocomplete="off" autocapitalize="words" maxlength="20" placeholder="輸入玩家名稱" style="flex:1;min-width:220px;padding:11px 13px;border:1px solid var(--line);border-radius:12px;font:inherit">
 <button class="primary" onclick="savePlayerName()">💾 儲存名稱</button></div>
 <p class="muted">玩家名稱會保存在本機存檔中。</p></div></section>
 <section id="save" class="panel"><div class="card"><div class="title">💾 存檔管理</div>
 <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0">
-<input id="playerNameInput" maxlength="20" placeholder="輸入玩家名稱" style="flex:1;min-width:220px;padding:11px 13px;border:1px solid var(--line);border-radius:12px;font:inherit">
+<input id="playerNameInput" autocomplete="off" autocapitalize="words" maxlength="20" placeholder="輸入玩家名稱" style="flex:1;min-width:220px;padding:11px 13px;border:1px solid var(--line);border-radius:12px;font:inherit">
 <button class="primary" onclick="setPlayerName()">💾 儲存玩家名稱</button>
 <button onclick="changePlayerName()">✏️ 修改名稱</button>
 </div>
@@ -961,7 +971,10 @@ function renderPK(){
       <button class="primary small" onclick='speakEnglish(${JSON.stringify(q.letter)})'>🔊 播放字母發音</button>
       <div style="font-size:20px;font-weight:900;margin-top:8px">哪一個選項是 <b>${esc(q.letter)}</b> 的自然發音單字？</div>
       <div style="font-size:26px;font-weight:1000;margin-top:7px;letter-spacing:2px">_${esc(q.rest)}</div>
-      <div id="pkChoices" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px">
+      <div style="display:flex;justify-content:space-between;gap:10px;margin:8px 0;font-weight:900">
+          <span>🐾 我方 HP：<b id="pkMyHpText">100</b></span>
+          <span>👾 對手 HP：<b id="pkOpponentHpText">100</b></span>
+        </div><div id="pkChoices" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px">
         ${q.options.map((o,i)=>`<button type="button" onclick="pkAnswer(${i})">🔊 ${esc(o.rest)}<br><small>${esc(o.word)}</small></button>`).join("")}
       </div>
       <div class="muted" style="margin-top:8px">${esc(q.zh)}</div><div style="margin-top:8px;font-weight:800;color:#b91c1c">答錯：寵物 HP -16　｜　答對：攻擊對手</div>
@@ -1001,67 +1014,112 @@ function makePKPhonicsQuestion(){
   ]);
   return {letter:x[0],word:x[1],rest:x[2],zh:`${x[0]} → ${x[1]}（${x[3]}）`,options:opts};
 }
+function updatePKHpDisplay(){
+  const b=window.pkBattle;
+  if(!b)return;
+  const my=String(Math.max(0,Number(b.myHp||0)));
+  const op=String(Math.max(0,Number(b.opHp||0)));
+  const ids=[
+    ["pkMyHpText",my],
+    ["pkOpponentHpText",op]
+  ];
+  ids.forEach(([id,val])=>{
+    const el=document.getElementById(id);
+    if(el)el.textContent=val;
+  });
+  const myBar=document.getElementById("pkMyHp");
+  const opBar=document.getElementById("pkOpponentHp");
+  if(myBar)myBar.style.width=Math.max(0,Math.min(100,Number(b.myHp||0)))+"%";
+  if(opBar)opBar.style.width=Math.max(0,Math.min(100,Number(b.opHp||0)))+"%";
+}
 function pkAnswer(index){
   const b=window.pkBattle;
   if(!b || !b.active || b.busy) return;
 
   const q=b.quiz || makePKPhonicsQuestion();
-  const o=q.options && q.options[index];
-  if(!o) return;
+  const options=Array.isArray(q.options)?q.options:[];
+  const selected=options[index];
+  if(!selected) return;
 
   b.busy=true;
 
-  // 播放被選單字；即使手機語音不可用，也不能影響戰鬥流程
-  try{ if(typeof speakEnglish==="function") speakEnglish(o.word); }catch(e){}
+  const buttons=document.querySelectorAll("#pkChoices button");
+  buttons.forEach(btn=>btn.disabled=true);
 
-  const choiceArea=document.getElementById("pkChoices");
-  if(choiceArea){
-    choiceArea.querySelectorAll("button").forEach(btn=>btn.disabled=true);
-  }
+  try{ if(typeof speakEnglish==="function") speakEnglish(selected.word||""); }catch(e){}
 
-  if(o.correct){
-    const dmg=22+Math.floor(Math.random()*10)+Math.floor((b.my.level||1)*1.3);
-    b.opHp=Math.max(0,b.opHp-dmg);
-    b.log.unshift(`✅ 正確！${q.letter} → ${o.word}，${b.my.name} 攻擊 ${dmg} HP！`);
-    showPkFx("💥","pk-right");
+  if(selected.correct){
+    const petLevel=Math.max(1,Number(b.my?.level||1));
+    const dmg=22+Math.floor(Math.random()*10)+Math.floor(petLevel*1.3);
 
+    b.opHp=Math.max(0,Number(b.opHp||0)-dmg);
+    b.log=Array.isArray(b.log)?b.log:[];
+    b.log.unshift(`✅ 答對！${q.letter} → ${selected.word}；${b.my.name} 攻擊 ${dmg} HP！`);
+
+    try{ showPkFx("💥","pk-right"); }catch(e){}
+    renderPK(); updatePKHpDisplay();
+
+    // 真人 PK：同步通知對手。
     if(b.online && window.pkConn){
       try{
         window.pkConn.send({
           type:"attack",
           damage:dmg,
-          from:state.playerName,
+          from:state.playerName||"玩家",
           pet:b.my.name
         });
       }catch(e){}
     }
 
     save();
-    renderPK();
 
     if(b.opHp<=0){
+      b.busy=false;
       pkWin();
       return;
     }
 
-    setTimeout(pkNextRandomQuestion,850);
-  }else{
-    // 答錯固定扣玩家寵物 16 HP
-    const damage=16;
-    b.myHp=Math.max(0,b.myHp-damage);
-    b.log.unshift(`❌ 答錯！${q.letter} → ${o.word} 不是正確答案。你的寵物 -${damage} HP！`);
-    showPkFx("💢","pk-left");
-
-    save();
-    renderPK();
-
-    if(b.myHp<=0){
-      pkLose();
-      return;
-    }
-
-    setTimeout(pkNextRandomQuestion,850);
+    setTimeout(()=>{
+      if(!window.pkBattle || !window.pkBattle.active)return;
+      pkNextRandomQuestion();
+    },850);
+    return;
   }
+
+  // ❌ 答錯：直接扣「目前玩家對戰寵物」HP。
+  const damage=16;
+  b.myHp=Math.max(0,Number(b.myHp||0)-damage);
+  b.log=Array.isArray(b.log)?b.log:[];
+  b.log.unshift(`❌ 答錯！正確答案：${q.answer}；${b.my.name} -${damage} HP`);
+
+  try{ showPkFx("💢","pk-left"); }catch(e){}
+
+  // 立即更新 PK 畫面，確保手機上血條與 HP 數字都減少。
+  renderPK(); updatePKHpDisplay();
+  save();
+
+  // 真人 PK：通知對手我方答錯造成的自傷。
+  if(b.online && window.pkConn){
+    try{
+      window.pkConn.send({
+        type:"selfDamage",
+        damage:damage,
+        from:state.playerName||"玩家",
+        pet:b.my.name
+      });
+    }catch(e){}
+  }
+
+  if(b.myHp<=0){
+    b.busy=false;
+    pkLose();
+    return;
+  }
+
+  setTimeout(()=>{
+    if(!window.pkBattle || !window.pkBattle.active)return;
+    pkNextRandomQuestion();
+  },850);
 }
 function pkNextRandomQuestion(){
   const b=window.pkBattle;
@@ -1379,6 +1437,34 @@ function renderRanking(){
       <b>Lv.${p.level}</b>
     </div>`).join("");
 }
+const LETTERS=[
+["A","/æ/","apple","vowel","/eɪ/","/ˈæpəl/"],
+["B","/b/","ball","consonant","/bi/","/bɔl/"],
+["C","/k/","cat","consonant","/si/","/kæt/"],
+["D","/d/","dog","consonant","/di/","/dɔɡ/"],
+["E","/ɛ/","egg","vowel","/i/","/ɛɡ/"],
+["F","/f/","fish","consonant","/ɛf/","/fɪʃ/"],
+["G","/g/","goat","consonant","/dʒi/","/goʊt/"],
+["H","/h/","hat","consonant","/eɪtʃ/","/hæt/"],
+["I","/ɪ/","igloo","vowel","/aɪ/","/ˈɪɡlu/"],
+["J","/dʒ/","jet","consonant","/dʒeɪ/","/dʒɛt/"],
+["K","/k/","kite","consonant","/keɪ/","/kaɪt/"],
+["L","/l/","lion","consonant","/ɛl/","/ˈlaɪən/"],
+["M","/m/","moon","consonant","/ɛm/","/mun/"],
+["N","/n/","net","consonant","/ɛn/","/nɛt/"],
+["O","/ɒ/","octopus","vowel","/oʊ/","/ˈɑktəpəs/"],
+["P","/p/","pig","consonant","/pi/","/pɪɡ/"],
+["Q","/kw/","queen","consonant","/kju/","/kwin/"],
+["R","/r/","rabbit","consonant","/ɑr/","/ˈræbət/"],
+["S","/s/","sun","consonant","/ɛs/","/sʌn/"],
+["T","/t/","top","consonant","/ti/","/tɑp/"],
+["U","/ʌ/","up","vowel","/ju/","/ʌp/"],
+["V","/v/","van","consonant","/vi/","/væn/"],
+["W","/w/","web","consonant","/ˈdʌbəlju/","/wɛb/"],
+["X","/ks/","box","consonant","/ɛks/","/bɑks/"],
+["Y","/j/","yellow","consonant","/waɪ/","/ˈjɛlo/"],
+["Z","/z/","zebra","consonant","/zi/","/ˈzibrə/"]
+];
 function filterLetters(type){
   window.letterFilter=type||"all";
   renderQuests();
@@ -1405,6 +1491,18 @@ function loadLetterDaily(){
   }
 }
 function saveLetterDaily(x){localStorage.setItem("phonics172_letter_daily_"+letterDayKey(),JSON.stringify(x))}
+const KK_SPOKEN={
+  A:"ah",B:"buh",C:"kuh",D:"duh",E:"eh",F:"fuh",G:"guh",H:"huh",
+  I:"ih",J:"juh",K:"kuh",L:"luh",M:"muh",N:"nuh",O:"ah",P:"puh",
+  Q:"kwuh",R:"ruh",S:"sss",T:"tuh",U:"uh",V:"vuh",W:"wuh",X:"ks",
+  Y:"yuh",Z:"zzz"
+};
+function speakKKSound(letter){
+  const key=String(letter||"").toUpperCase();
+  const spoken=KK_SPOKEN[key];
+  if(!spoken)return false;
+  return speakText(spoken,"en-US",.72);
+}
 function speakLetter(letter){
   return speakText(letter,"en-US",.8);
 }
@@ -1417,6 +1515,8 @@ function practiceLetter(i){
   renderQuests();
 }
 
+
+
 function renderQuests(){
   const data=loadLetterDaily(),done=new Set(data.done||[]);
   const wrap=document.getElementById("letterPractice");
@@ -1424,37 +1524,87 @@ function renderQuests(){
   const filter=window.letterFilter||"all";
   const list=LETTERS.filter(L=>filter==="all"||L[3]===filter);
   const info=document.getElementById("letterFilterInfo");
-  if(info){
-    info.textContent=filter==="vowel"
-      ?"目前：🔵 母音（A E I O U）"
-      :filter==="consonant"
-        ?"目前：🟠 子音（B C D F G H J K L M N P Q R S T V W X Y Z）"
-        :"目前：全部 26 個字母";
-  }
+  if(info)info.textContent=filter==="vowel"?"目前：🔵 母音（A E I O U）":filter==="consonant"?"目前：🟠 子音":"目前：🔤 全部 A–Z";
+
   wrap.innerHTML=list.map(L=>{
-    const i=LETTERS.indexOf(L);
-    const isVowel=L[3]==="vowel";
-    return `<div class="tile ${done.has(i)?"":"locked"}" style="cursor:pointer">
-      <div class="icon" style="font-size:38px">${L[0]}</div>
-      <b>${isVowel?"🔵 母音":"🟠 子音"}</b>
-      <p style="font-size:22px;font-family:Georgia,serif;margin:5px 0;font-weight:900">${L[1]}</p>
-      <div style="font-weight:800">例字：${L[2]}</div>
-      <div class="muted" style="margin-top:5px">${isVowel?"母音自然發音":"子音自然發音"}</div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:9px">
-        <button class="primary small" type="button" onclick="event.stopPropagation();speakLetter('${L[0]}')">🔊 字母</button>
-        <button class="primary small" type="button" onclick="event.stopPropagation();speakEnglish('${L[2]}')">🔊 例字</button>
-        <button class="primary small" type="button" onclick="event.stopPropagation();speakEnglish('${L[1]}')">${isVowel?"🔵 母音":"🟠 子音"}發音</button>
+    const i=LETTERS.indexOf(L),v=L[3]==="vowel";
+    return `<div class="tile ${done.has(i)?"":"locked"}">
+      <div class="icon" style="font-size:42px;font-weight:1000">${L[0]}</div>
+      <div style="margin-top:4px"><span class="tag">${v?"🔵 母音":"🟠 子音"}</span></div>
+      <div style="margin-top:8px;font-weight:900">自然發音：<span style="font-family:Georgia,serif">${L[1]}</span></div>
+      <div style="margin-top:5px;font-weight:900">KK 音標：<span style="font-family:Georgia,serif">${L[4]}</span></div>
+      <div style="margin-top:7px"><span class="muted">代表單字：</span><b>${L[2]}</b></div>
+      <div class="muted" style="margin-top:4px">單字 KK：<span style="font-family:Georgia,serif">${L[5]}</span></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">
+        <button class="primary small" type="button" onclick="speakLetter('${L[0]}')">🔊 A–Z 發音</button>
+        <button class="primary small" type="button" onclick="speakKKSound('${L[0]}')">🔊 KK 音標發音</button>
+        <button class="primary small" type="button" onclick="speakEnglish('${L[2]}')">🔊 單字</button>
+        <button class="primary small" type="button" onclick="practiceLetter(${i})">🎧 練習</button>
       </div>
     </div>`;
   }).join("");
+
   const n=done.size;
   const t=document.getElementById("letterProgressText"),b=document.getElementById("letterProgressBar");
   if(t)t.textContent=`${n}/26`;
   if(b)b.style.width=(n/26*100)+"%";
 }
-function renderSave(){const inp=document.getElementById("playerNameInput");if(inp)inp.value=state.playerName;document.getElementById("saveInfo").innerHTML=`👤 玩家：<b>${esc(state.playerName)}</b><br>🎯 通關：${state.done.length}/172<br>✨ XP：${state.xp}<br>⭐ 星星：${state.stars}<br>🪙 金幣：${state.coins||0}<br>🐾 寵物：${state.currentPet?(PETS.find(p=>p.id===state.currentPet)?.emoji+" "+PETS.find(p=>p.id===state.currentPet)?.name):"未選擇"}<br>⚔️ PK：${state.pkWins||0} 勝 / ${state.pkLosses||0} 敗<br>💾 存檔：已啟用`}
-function setPlayerName(){const inp=document.getElementById("playerNameInput");const name=(inp?.value||"").trim().slice(0,20);if(!name){alert("請輸入玩家名稱");return}state.playerName=name;save();renderSave();alert("✅ 玩家名稱已儲存："+name)}
-function changePlayerName(){const name=prompt("請輸入新的玩家名稱：",state.playerName);if(name===null)return;const n=name.trim().slice(0,20);if(!n){alert("玩家名稱不能空白");return}state.playerName=n;save();renderSave();}
+function renderSave(){
+  const inp=document.getElementById("playerNameInput");
+  if(inp && document.activeElement!==inp) inp.value=state.playerName||"玩家";
+  const current=document.getElementById("playerCurrentName");
+  if(current)current.textContent=state.playerName||"玩家";
+  const info=document.getElementById("saveInfo");
+  if(info){
+    const pet=state.currentPet&&Array.isArray(PETS)?PETS.find(p=>p.id===state.currentPet):null;
+    info.innerHTML=`👤 玩家：<b>${esc(state.playerName||"玩家")}</b><br>
+      🎯 通關：${Array.isArray(state.done)?state.done.length:0}/172<br>
+      ✨ XP：${state.xp||0}<br>
+      ⭐ 星星：${state.stars||0}<br>
+      🪙 金幣：${state.coins||0}<br>
+      🐾 寵物：${pet?esc(pet.emoji+" "+pet.name):"未選擇"}<br>
+      ⚔️ PK：${state.pkWins||0} 勝 / ${state.pkLosses||0} 敗<br>
+      💾 存檔：已啟用`;
+  }
+}
+function setPlayerName(){
+  const inp=document.getElementById("playerNameInput");
+  if(!inp)return;
+  const name=String(inp.value||"").trim().slice(0,20);
+  if(!name){alert("請輸入玩家名稱");inp.focus();return;}
+  state.playerName=name;
+  localStorage.setItem(KEY,JSON.stringify(state));
+  updateHUD();
+  renderSave();
+  const input=document.getElementById("playerNameInput");
+  if(input){
+    input.value=name;
+    input.focus();
+    if(typeof input.setSelectionRange==="function"){
+      const n=input.value.length;
+      input.setSelectionRange(n,n);
+    }
+  }
+  alert("✅ 玩家名稱已儲存："+name);
+}
+function changePlayerName(){
+  const inp=document.getElementById("playerNameInput");
+  if(inp){
+    inp.focus();
+    if(typeof inp.setSelectionRange==="function"){
+      const n=inp.value.length;
+      inp.setSelectionRange(n,n);
+    }
+    return;
+  }
+  const name=prompt("請輸入新的玩家名稱：",state.playerName||"玩家");
+  if(name===null)return;
+  const n=String(name).trim().slice(0,20);
+  if(!n){alert("玩家名稱不能空白");return;}
+  state.playerName=n;
+  save();
+  renderSave();
+}
 function exportSave(){const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="172組合音故事單詞卡_V6_存檔.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),800)}
 function resetSave(){if(confirm("確定重置全部進度？")){localStorage.removeItem(KEY);state=baseState();save();populateLevels();renderLearn();showTab("learn");alert("已重新開始！")}}
 function renderPlayer(){
