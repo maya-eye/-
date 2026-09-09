@@ -7,7 +7,7 @@
 <style>
 :root{--bg:#f5f7fb;--card:#fff;--ink:#172033;--muted:#667085;--line:#dde5ef;--a:#5b5bd6;--b:#7c3aed;--good:#16a34a;--bad:#dc2626}
 *{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#eef2ff,#f8fafc 28%,#f5f7fb);font-family:"Microsoft JhengHei","Segoe UI",sans-serif;color:var(--ink)}
-button,select{font:inherit}button{cursor:pointer;border:0;border-radius:12px;padding:10px 14px;background:#eef2ff;color:#25304a;font-weight:800}button:hover{transform:translateY(-1px)}button:disabled{opacity:.45;cursor:not-allowed;transform:none}.primary{background:var(--a);color:#fff}.danger{background:#fee2e2;color:#991b1b}.small{padding:7px 9px;font-size:13px}
+button,select{font:inherit}button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}button{cursor:pointer;border:0;border-radius:12px;padding:10px 14px;background:#eef2ff;color:#25304a;font-weight:800}button:hover{transform:translateY(-1px)}button:disabled{opacity:.45;cursor:not-allowed;transform:none}.primary{background:var(--a);color:#fff}.danger{background:#fee2e2;color:#991b1b}.small{padding:7px 9px;font-size:13px}
 .wrap{max-width:1200px;margin:auto;padding:18px}header{background:#111827;color:#fff;border-radius:24px;padding:20px;box-shadow:0 14px 40px #1118271a}h1{margin:0;font-size:clamp(24px,4vw,40px)}.sub{opacity:.85;margin:5px 0 0}
 .hud{display:grid;grid-template-columns:repeat(6,1fr);gap:9px;margin-top:16px}.hudbox{padding:10px;border-radius:14px;background:#fff1;border:1px solid #fff2}.hudbox b{display:block;font-size:20px;margin-top:2px}
 .tabs{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}.tab.active{background:var(--a);color:#fff}
@@ -65,7 +65,8 @@ body.mobile-preview #deviceFrame{max-width:410px;margin:0 auto;box-shadow:0 12px
   <button id="desktopModeBtn" class="active" type="button" onclick="setDeviceMode('desktop')">🖥️ 電腦版</button>
   <button id="mobileModeBtn" type="button" onclick="setDeviceMode('mobile')">📱 手機版</button>
   <button type="button" onclick="setDeviceMode('auto')">🔄 自動</button>
-</div>
+</div><div id="audioTip" style="text-align:center;margin:6px 0;font-size:13px;color:#667085">🔊 手機第一次播放請先按「啟用語音」</div>
+<div style="text-align:center;margin:6px 0"><button id="enableAudio" class="primary" type="button" onclick="enableMobileAudio()">🔊 啟用語音</button></div>
 
 <div id="deviceFrame"><div class="wrap">
 <header>
@@ -175,6 +176,19 @@ function baseState(){return{xP:0,xp:0,stars:0,combo:0,hp:100,level:1,done:[],bos
 function loadState(){try{const s=JSON.parse(localStorage.getItem(KEY));return Object.assign(baseState(),s||{})}catch(e){return baseState()}}
 function save(){localStorage.setItem(KEY,JSON.stringify(state));updateHUD();renderAll()}
 
+function enableMobileAudio(){
+  if(!("speechSynthesis" in window)){
+    alert("此瀏覽器不支援語音播放，請改用 Safari 或 Chrome。");
+    return;
+  }
+  const test=new SpeechSynthesisUtterance("Ready");
+  test.lang="en-US";test.rate=1;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(test);
+  const tip=document.getElementById("audioTip");if(tip)tip.textContent="✅ 語音已啟用";
+  const btn=document.getElementById("enableAudio");if(btn)btn.textContent="✅ 語音已啟用";
+  setTimeout(()=>{if(tip)tip.style.display="none";},1200);
+}
 function setDeviceMode(mode){
   const body=document.body,frame=document.getElementById("deviceFrame");
   const d=document.getElementById("desktopModeBtn"),m=document.getElementById("mobileModeBtn");
@@ -214,7 +228,11 @@ function reg(n){return REGIONS.find(r=>n>=r.start&&n<=r.end)||REGIONS[0]}
 function unlocked(n){return n===1||state.done.includes(n-1)}
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function shuffle(a){return a.slice().sort(()=>Math.random()-.5)}
-function speak(t){if(!window.speechSynthesis)return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=.86;window.speechSynthesis.speak(u)}
+
+
+
+
+
 function speakChinese(t){
   if(!window.speechSynthesis)return;
   window.speechSynthesis.cancel();
@@ -240,6 +258,39 @@ function speakEnglish(t){
 }
 
 function updateHUD(){normalize();const hp=document.getElementById("Hpet");if(hp){const pp=PETS.find(p=>p.id===state.currentPet);hp.textContent=pp?pp.emoji+" "+pp.name:"無";}document.getElementById("Hname").textContent=state.playerName;document.getElementById("Hstars").textContent=state.stars;document.getElementById("Hxp").textContent=state.xp;document.getElementById("Hcombo").textContent=state.combo;document.getElementById("Hhp").textContent=state.hp;document.getElementById("Hcoins").textContent=state.coins||0;document.getElementById("Hprogress").textContent=state.done.length+"/172";document.getElementById("progressBar").style.width=(state.done.length/172*100)+"%";const pn=document.getElementById("playerNameDisplay");if(pn)pn.textContent=state.playerName}
+function getVoice(lang){
+  const voices=("speechSynthesis" in window)?window.speechSynthesis.getVoices():[];
+  const want=String(lang||"en-US").toLowerCase();
+  return voices.find(v=>String(v.lang||"").toLowerCase()===want)
+      || voices.find(v=>String(v.lang||"").toLowerCase().startsWith(want.slice(0,2)))
+      || null;
+}
+function speakText(text,lang="en-US",rate=.86){
+  if(!("speechSynthesis" in window)||!text)return false;
+  const run=()=>{
+    try{
+      window.speechSynthesis.cancel();
+      const u=new SpeechSynthesisUtterance(String(text));
+      u.lang=lang;
+      u.rate=rate;
+      u.pitch=1;
+      const voice=getVoice(lang);
+      if(voice)u.voice=voice;
+      window.speechSynthesis.speak(u);
+    }catch(e){console.warn("Speech error",e);}
+  };
+  const voices=window.speechSynthesis.getVoices();
+  if(voices&&voices.length) run();
+  else{
+    window.speechSynthesis.onvoiceschanged=run;
+    setTimeout(run,200);
+  }
+  return true;
+}
+function speak(t){return speakText(t,"en-US",.86);}
+
+
+
 function showTab(id){document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("active",p.id===id));document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===id));if(id==="learn")renderLearn();if(id==="game"){if(!quiz.items.length)buildQuiz();else renderQuestion()}if(id==="mind")renderMind();if(id==="world")renderWorld();if(id==="character")renderCharacter();if(id==="equipment")renderEquipment();if(id==="boss")renderBoss();if(id==="achievements")renderAchievements();if(id==="ranking")renderRanking();if(id==="quests")renderQuests();if(id==="save")renderSave()}
 document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>showTab(b.dataset.tab))
 
@@ -343,9 +394,9 @@ function playStoryWithSubtitles(w,d){
           `<div style="font-size:23px;font-weight:900;margin-top:3px">${esc(line.en)}</div>`+
           `<div style="font-size:19px;margin-top:5px">🇹🇼 ${esc(line.zh)}</div>`+
           `<div class="muted" style="margin-top:5px">🔤 ${esc(line.pron)}</div>`+
-          `<div style="margin-top:8px"><button class="small" onclick='speakChinese(${JSON.stringify(line.zh)})'>🗣️ 播放中文</button></div>`;
+          `<div style="margin-top:8px"><button class="small" onclick='speakText(${JSON.stringify(line.zh)},"zh-TW",.9)'>🗣️ 播放中文</button></div>`;
       }
-      speakEnglish(line.en);
+      speakText(line.en,"en-US",.84);
     },i*3200);
   });
 }
@@ -466,7 +517,7 @@ function mindWord(i){
           <span>🔤 ${esc(line.pron)}</span>
           <div style="margin-top:8px;display:flex;gap:7px;flex-wrap:wrap">
             <button class="primary small" onclick='speak(${JSON.stringify(line.en)})'>🔊 Play English</button>
-            <button class="small" onclick='speakChinese(${JSON.stringify(line.zh)})'>🗣️ 播放中文語音（台灣中文）</button>
+            <button class="small" onclick='speakText(${JSON.stringify(line.zh)},"zh-TW",.9)'>🗣️ 播放中文語音（台灣中文）</button>
           </div>
         </div>`).join("")}
       <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
@@ -523,7 +574,7 @@ function mindInfo(k){
     if(storyBtn) storyBtn.onclick=()=>playStoryWithSubtitles(first,d);
 
     // 進入「例句」選項時直接播放英文例句。
-    setTimeout(()=>speakEnglish(en),180);
+    setTimeout(()=>{const b=document.getElementById("mindPlayExampleEnglish");if(b)b.focus()},180);
   }else if(k==="story"){
     const first=ws[0],s=first?storyStructure(first,d):null;
     document.getElementById("mindInfo").innerHTML=s?`
